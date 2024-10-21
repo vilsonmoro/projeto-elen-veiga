@@ -1,6 +1,8 @@
 package com.tcc2.ellemVeigaOficial.controllers;
 
+import com.tcc2.ellemVeigaOficial.models.security.RecoveryJwtTokenDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,9 +25,9 @@ public class LoginController {
     private UsuarioService service;
 
     @PostMapping
-    public ResponseEntity<Usuario> login(@RequestBody Login login) {
-        Usuario usuario = service.login(login.getUsuario(), login.getSenha());
-        return ResponseEntity.ok(usuario);
+    public ResponseEntity<RecoveryJwtTokenDto> authenticateUser(@RequestBody Login loginUserDto) {
+        RecoveryJwtTokenDto token = service.authenticateUser(loginUserDto);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @GetMapping("/validarsenha")
