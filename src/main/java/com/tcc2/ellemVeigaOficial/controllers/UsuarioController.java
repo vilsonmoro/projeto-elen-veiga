@@ -25,8 +25,9 @@ public class UsuarioController {
     private UsuarioService service;
     private final PasswordEncoder encoder;
 
-    @PostMapping
+    @PostMapping("cadastro") // coloquei rota para liberar poder criar um usuario para testar
     public ResponseEntity<Usuario> addUsuario(@RequestBody Usuario usuario){
+        // TODO: pq se tem no repo um salvar usuario se tu salva ele direto?
         usuario.setSenha(encoder.encode(usuario.getSenha()));
         return ResponseEntity.ok(service.addUsuario(usuario));
     }
