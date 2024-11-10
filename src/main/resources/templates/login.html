@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #000;
+        }
+
+        .page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            background-color: #FFE890;
+        }
+
+        .logo {
+            width: 320px;
+            margin-bottom: 32px;
+        }
+
+        .formLogin {
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            border-radius: 7px;
+            padding: 40px;
+            box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .formLogin h1 {
+            padding: 5px;
+            margin: 25px;
+            font-weight: 500;
+            font-size: 1.9em;
+        }
+
+        .btn {
+            background-color: #FFE100; 
+            color: #000;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            transition: transform 160ms linear;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background-color: #FFE890;
+        }
+
+        .input-field {
+            margin-bottom: 20px; /* Adiciona um espaço entre os campos */
+        }
+
+        .input-field input {
+            border: 1px solid #ccc; /* Estilo padrão para o campo de entrada */
+            padding: 10px; /* Espaçamento interno para o campo de entrada */
+            width: 100%; /* Largura total */
+            border-radius: 4px; /* Bordas arredondadas */
+        }
+
+        .input-field input:focus {
+            border-bottom: 1px solid #FFE100 !important;
+            box-shadow: 0 1px 0 0 #FFE100 !important;
+        }
+
+        .input-field label {
+            font-weight: normal; /* Estilo padrão para o rótulo */
+        }
+
+        .input-field input:focus + label {
+            color: #FFE100 !important;
+        }
+        .input-field input.valid {
+            border-bottom: 1px solid #FF5733;
+        }
+        .input-field input.invalid {
+            border-bottom: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page">
+        <img src="\images\logo.jpg" alt="Logo"/>
+        <form method="POST" class="formLogin" object="login">
+            <h1>Iniciar sessão</h1>
+            <div class="input-field">
+                <input type="text" field="usuario" id="login" required />
+                <label for="login">Login</label>
+            </div>
+            <div class="input-field">
+                <input type="password" id="password" field="senha" required />
+                <label for="password">Senha</label>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!--<script src="\js\login.js"></script>-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('.formLogin');
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+            
+                const login = document.getElementById('login').value; 
+                const password = document.getElementById('password').value;
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+                if (!login || (login.trim().length < 3 && !emailPattern.test(login))) {
+                    alert('Por favor, insira um email válido ou um nome de usuário (mínimo 3 caracteres).');
+                    return;
+                }
+            
+                if (!password) {
+                    alert('Por favor, insira sua senha.');
+                    return;
+                }
+            
+                // Montar o objeto de dados para enviar
+                const data = {
+                    usuario: login,
+                    senha: password
+                };
+            
+                // Chamada à API para autenticação
+                fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na autenticação');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Verifique se o token foi retornado na resposta
+                    if (data.token) {
+                        // Salvar o token no localStorage
+                        localStorage.setItem('token', data.token);
+
+                        // Redirecionar para a página inicial
+                        window.location.href = '/paginainicial'; // ou qualquer página desejada
+                    } else {
+                        alert('Erro: Token não recebido.');
+                    }
+                })
+                .catch(error => {
+                    if (error.response) {
+                        // O servidor respondeu com um código de status fora do intervalo 2xx
+                        alert('Erro: ' + error.response.status + ' - ' + error.message);
+                    } else {
+                        // Alguma coisa deu errado ao configurar a requisição
+                        alert('Erro ao se conectar ao servidor: ' + error.message);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

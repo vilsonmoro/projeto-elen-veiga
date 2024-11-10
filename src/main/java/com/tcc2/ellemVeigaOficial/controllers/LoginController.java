@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tcc2.ellemVeigaOficial.models.Login;
 import com.tcc2.ellemVeigaOficial.models.Usuario;
 import com.tcc2.ellemVeigaOficial.services.UsuarioService;
-
 import lombok.AllArgsConstructor;
 
 @RequestMapping("/login")

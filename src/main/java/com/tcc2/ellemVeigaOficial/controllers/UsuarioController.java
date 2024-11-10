@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.tcc2.ellemVeigaOficial.models.Usuario;
 import com.tcc2.ellemVeigaOficial.services.UsuarioService;
 import lombok.AllArgsConstructor;
-
 
 @RestController
 @RequestMapping("/usuario")
@@ -25,9 +25,8 @@ public class UsuarioController {
     private UsuarioService service;
     private final PasswordEncoder encoder;
 
-    @PostMapping("cadastro") // coloquei rota para liberar poder criar um usuario para testar
+    @PostMapping("cadastro")
     public ResponseEntity<Usuario> addUsuario(@RequestBody Usuario usuario){
-        // TODO: pq se tem no repo um salvar usuario se tu salva ele direto?
         usuario.setSenha(encoder.encode(usuario.getSenha()));
         return ResponseEntity.ok(service.addUsuario(usuario));
     }
@@ -51,10 +50,20 @@ public class UsuarioController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Usuario>> buscarUsuarios(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String sobrenome) {
+        List<Usuario> usuarios = service.buscarUsuarios(id, nome, sobrenome);
+        return ResponseEntity.ok(usuarios);
     }
 
 }

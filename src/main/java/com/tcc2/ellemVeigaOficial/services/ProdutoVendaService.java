@@ -35,4 +35,8 @@ public class ProdutoVendaService {
         produtoVenda.setId(id);
         return repository.save(produtoVenda);
     }
+
+    public List<ProdutoVenda> buscarProdutoVendas(Long idVenda, String nomeProduto) {
+        return repository.buscarProdutoVendas(idVenda, nomeProduto);
+    }
 }

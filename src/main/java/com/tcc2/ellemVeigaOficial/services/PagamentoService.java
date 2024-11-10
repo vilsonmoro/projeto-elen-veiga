@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import com.tcc2.ellemVeigaOficial.models.Pagamento;
 import com.tcc2.ellemVeigaOficial.repositories.PagamentoRepository;
+import java.util.Date;
 
 @Service
 public class PagamentoService {
@@ -38,4 +39,8 @@ public class PagamentoService {
         pagamento.setId(id);
         return repository.save(pagamento);
     }
+
+    public List<Pagamento> buscarPagamentos(Long codigo, String nomeCliente, Long codigoPedido, Date startDate, Date endDate) {   
+        return repository.findPagamentos(codigo, nomeCliente, codigoPedido, startDate, endDate);
+    }    
 }

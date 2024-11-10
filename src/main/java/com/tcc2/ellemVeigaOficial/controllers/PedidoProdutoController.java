@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import com.tcc2.ellemVeigaOficial.models.PedidoProduto;
@@ -50,5 +51,13 @@ public class PedidoProdutoController {
     public ResponseEntity<Void> deletePedidoProduto(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<PedidoProduto>> buscarPedidoProdutos(
+            @RequestParam(required = false) Long codPedido,
+            @RequestParam(required = false) String nomeProduto) {
+        List<PedidoProduto> pedidosProdutos = service.buscarPedidoProdutos(codPedido, nomeProduto);
+        return ResponseEntity.ok(pedidosProdutos);
     }
 }

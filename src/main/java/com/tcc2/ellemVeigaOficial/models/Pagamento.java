@@ -1,7 +1,6 @@
 package com.tcc2.ellemVeigaOficial.models;
 
 import java.util.Date;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,10 +27,13 @@ public class Pagamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "codigo_pag")
     private Long id;
+
 	@Column(name = "data_pag", nullable = false, length = 255)
     private Date data;
+
 	@Column(name = "valor_pag", nullable = false, length = 255)
     private Float valor;
+
 	@Column(name = "parcela_pag", nullable = false, length = 255)
     private int parcela;
 

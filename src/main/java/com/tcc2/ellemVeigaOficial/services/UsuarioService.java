@@ -81,4 +81,8 @@ public class UsuarioService {
         return repository.save(usuario);
     }
 
+    public List<Usuario> buscarUsuarios(Long id, String nome, String sobrenome) {
+        return repository.buscarUsuarios(id, nome, sobrenome);
+    }
+
 }

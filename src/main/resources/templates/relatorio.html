@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #FFE890;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar img {
+            width: 100px;
+        }
+
+        .icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .icons a {
+            color: #000;
+            text-decoration: none;
+            font-size: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+		
+		.icons span.material-icons {
+            font-size: 35px;
+        }
+
+        .sidebar {
+            background-color: #FFE890;
+            width: 140px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 60px;
+        }
+
+        .sidebar li {
+            text-align: center;
+            margin-bottom: 38px;
+        }
+
+        .sidebar a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+			line-height: 1;
+            color: #000000;
+        }
+
+
+		.sidebar span.material-icons {
+            font-size: 40px; 
+            transform: translateY(4px); 
+        }
+		
+		.sidebar a.active {
+			background-color: #FFE100;
+			border-radius: 10px; 
+			color: #000;
+		}	
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-left: 100px;
+            padding: 20px;
+            padding-top: 70px;
+            flex: 1;
+			width: 100%;
+        }
+
+        .btn {
+            background-color: #FFE100;
+            color: #000;
+			margin-top: 20px;
+			width: auto;
+			margin-left: 150px;
+        }
+
+        .btn:hover {
+            background-color: #FFD700;
+        }
+		
+		.btn-amarelo {
+			background-color: #FFD700 !important;
+			color: #000 !important;
+		}
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            font-weight: bold;
+        }
+		
+		.input-field input:focus {
+            border-bottom: 1px solid #FFE100 !important;
+            box-shadow: 0 1px 0 0 #FFE100 !important;
+        }
+
+        .input-field input:focus + label {
+            color: #FFE100 !important;
+        }
+
+        .input-field input.valid {
+            border-bottom: 1px solid #FF5733;
+        }
+
+        .input-field input.invalid {
+            border-bottom: 1px solid red;
+        }
+		
+		.label-pagamento {
+			margin-top: -10px;
+		}
+		
+		.checkbox-container {
+			margin-top: 50px;
+		}
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a th:href="@{/paginainicial}"><img th:src="@{/imagem/logo.jpg}" alt="Logo"/></a>
+        <div class="icons">
+            <a th:href="@{/buscarusuario}" title="Usuário">
+                <span class="material-icons">account_circle</span>
+            </a>
+            <a href="#" onclick="confirmLogout(event)" title="Sair"><span class="material-icons">logout</span></a>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <ul>
+            <li><a th:href="@{/buscarcliente}" title="Cliente"><span class="material-icons">people</span></a></li> 
+            <li><a th:href="@{/buscarproduto}" title="Produto"><span class="material-icons">checkroom</span></a></li>
+            <li><a th:href="@{/buscarpedido}" title="Pedido"><span class="material-icons">list_alt</span></a></li>
+            <li><a th:href="@{/buscarvenda}" title="Venda"><span class="material-icons">attach_money</span></a></li> 
+            <li><a th:href="@{/buscarpagamento}" title="Pagamento"><span class="material-icons">payment</span></a></li> 
+            <li><a th:href="@{/relatorio}" title="Relatórios"><span class="material-icons">assignment</span></a></li> 
+            <li><a th:href="@{/buscarvendedor}" title="Vendedor"><span class="material-icons">support_agent</span></a></li> 
+        </ul>
+    </div>
+
+    <div class="content">
+        <h1>Relatórios</h1>
+        <form id="relatorioForm" onsubmit="return buscar();">
+            <div class="input-field">
+                <input type="date" id="dataInicial" required>
+                <label for="dataInicial">Data Inicial</label>
+            </div>
+            <div class="input-field">
+                <input type="date" id="dataFinal" required>
+                <label for="dataFinal">Data Final</label>
+            </div>
+			<div class="input-field">
+				<label class="label-pagamento">Forma de pagamento *</label>
+			</div>
+            <div class="input-field checkbox-container">
+				<div class="checkbox-options">
+					<label>
+						<input type="checkbox" class="filled-in" id="pedido" />
+						<span>Pedido</span>
+					</label>
+					<label>
+						<input type="checkbox" class="filled-in" id="produto" />
+						<span>Produto</span>
+					</label>
+					<label>
+						<input type="checkbox" class="filled-in" id="venda" />
+						<span>Venda</span>
+					</label>
+					<label>
+						<input type="checkbox" class="filled-in" id="pagamento" />
+						<span>Pagamento</span>
+					</label>
+					<label>
+						<input type="checkbox" class="filled-in" id="fluxocaixa" />
+						<span>Fluxo de caixa</span>
+					</label>
+				</div>
+			</div>
+            <button class="btn waves-effect waves-light" type="submit">Buscar</button>
+            <button class="btn waves-effect waves-light" onclick="exportPdf()">Exportar PDF</button>
+        </form>
+        <div id="feedback" style="margin-top: 20px;"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script th:src="@{/js/relatorio.js}"></script>
+</body>
+</html>

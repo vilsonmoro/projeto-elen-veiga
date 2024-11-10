@@ -27,18 +27,23 @@ public class PedidoProduto {
 	
 	@Column(name = "qtd_pp", nullable = false, length = 100)
     private int quatidade;
+
 	@Column(name = "valor_pp", length = 100)
     private Float valor_total;
+
 	@Column(name = "observacao_pp", length = 100)
     private String observacao;
+
     @Column(name = "tamanho_pp", nullable = false, length = 100)
     private String tamanho;
+    
     @Column(name = "desconto_pp", length = 100)
     private Float desconto;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "codpro_pp", nullable = false)
     private Produto produto;
+    
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "codped_pp", nullable = false)
 	private Pedido pedido;

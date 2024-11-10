@@ -55,4 +55,18 @@ public class JwtTokenService {
         return ZonedDateTime.now(ZoneId.of("America/Recife")).plusHours(4).toInstant();
     }
 
+    // Novo método para validar o token
+    public boolean isTokenValid(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+            JWT.require(algorithm)
+                    .withIssuer(ISSUER)
+                    .build()
+                    .verify(token);
+            return true; // Se o token é verificado com sucesso, é válido
+        } catch (JWTVerificationException exception) {
+            return false; // O token é inválido ou expirado
+        }
+    }
+
 }

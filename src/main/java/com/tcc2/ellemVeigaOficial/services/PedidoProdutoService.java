@@ -35,4 +35,8 @@ public class PedidoProdutoService {
         pedidoProduto.setId(id);
         return repository.save(pedidoProduto);
     }
+
+    public List<PedidoProduto> buscarPedidoProdutos(Long codPedido, String nomeProduto) {
+        return repository.buscarPedidoProdutos(codPedido, nomeProduto);
+    }
 }

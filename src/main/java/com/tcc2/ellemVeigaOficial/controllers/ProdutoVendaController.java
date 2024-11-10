@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import com.tcc2.ellemVeigaOficial.models.ProdutoVenda;
@@ -36,7 +37,6 @@ public class ProdutoVendaController {
     public ResponseEntity<List<ProdutoVenda>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
-        
 
     @PutMapping("/{id}")
     public ResponseEntity<ProdutoVenda> updateProdutoVenda(@PathVariable Long id, @RequestBody ProdutoVenda produtoVenda) {
@@ -47,9 +47,18 @@ public class ProdutoVendaController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProdutoVenda(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ProdutoVenda>> buscarProdutoVendas(
+            @RequestParam(required = false) Long idVenda,
+            @RequestParam(required = false) String nomeProduto) {
+        List<ProdutoVenda> produtoVendas = service.buscarProdutoVendas(idVenda, nomeProduto);
+        return ResponseEntity.ok(produtoVendas);
     }
 }

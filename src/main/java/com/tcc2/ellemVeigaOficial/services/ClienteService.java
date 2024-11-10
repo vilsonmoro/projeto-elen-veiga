@@ -2,6 +2,8 @@ package com.tcc2.ellemVeigaOficial.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
+import java.util.ArrayList;
 import java.util.List;
 import com.tcc2.ellemVeigaOficial.models.Cliente;
 import com.tcc2.ellemVeigaOficial.repositories.ClienteRepository;
@@ -37,4 +39,22 @@ public class ClienteService {
     public ClienteService(ClienteRepository repository){
         this.repository = repository;
     }   
+
+    public List<Cliente> buscarCliente(Long id, String nome) {
+        List<Cliente> resultados = new ArrayList<>();
+
+        if (id != null) {
+            Optional<Cliente> cliente = repository.findById(id);
+            cliente.ifPresent(resultados::add);
+        }
+
+        if (nome != null) {
+            List<Cliente> clientesPorNome = repository.findByNome(nome);
+            resultados.addAll(clientesPorNome);
+        }
+
+        return resultados.isEmpty() ? findAll() : resultados;
+    }
+
 }
+

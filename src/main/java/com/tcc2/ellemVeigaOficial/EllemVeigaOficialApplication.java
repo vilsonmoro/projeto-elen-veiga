@@ -9,5 +9,4 @@ public class EllemVeigaOficialApplication {
 		SpringApplication.run(EllemVeigaOficialApplication.class, args);
 	
 	}
-
 }

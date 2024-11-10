@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliente</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+		body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #FFE890;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar img {
+            width: 100px;
+        }
+
+        .icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .icons a {
+            color: #000;
+            text-decoration: none;
+            font-size: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+		
+		.icons span.material-icons {
+            font-size: 35px;
+        }
+
+        .sidebar {
+            background-color: #FFE890;
+            width: 140px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 60px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            text-align: center;
+            margin-bottom: 38px;
+        }
+
+        .sidebar a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+			line-height: 1;
+            color: #000000;
+        }
+
+        .sidebar a:hover {
+            background-color: #FFE100;
+            border-radius: 5px;
+        }
+
+		.sidebar span.material-icons {
+            font-size: 40px;
+            transform: translateY(4px);
+        }
+		
+		.sidebar a.active {
+			background-color: #FFE100;
+			border-radius: 10px;
+			color: #000;
+		}
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-left: 100px;
+            padding: 20px;
+            padding-top: 70px;
+            flex: 1;
+        }
+
+        .input-field {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .btn {
+            background-color: #FFE100;
+            color: #000;
+			margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #FFD700;
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            font-weight: bold;
+        }
+		
+		.password-container {
+			position: relative;
+		}
+
+		.eye-icon {
+			cursor: pointer;
+			position: absolute;
+			right: 10px;
+			top: 50%;
+			transform: translateY(-50%);
+			color: #000;
+		}
+
+        .observacao-field {
+            height: 250px;
+        }
+		
+		.tabs {
+			width: 100%;
+			max-width: 600px;
+			margin-top: 20px;
+		}
+
+		.tab-content {
+			display: none;
+		}
+
+		.tab-content.active {
+			display: block;
+		}
+		.center-inputs {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				margin-bottom: 20px;
+			}
+			
+		.dropdown-content {
+			background-color: #FFE890;
+			color: #000;
+		}
+
+		.dropdown-content a {
+			color: #000;
+		}
+
+		.dropdown-content a:hover {
+			background-color: #FFE100;
+			color: #000;
+		}
+
+		.icons a:hover {
+			background-color: #FFE100;
+			border-radius: 5px;
+		}
+		
+		.input-field input:focus {
+            border-bottom: 1px solid #FFE100 !important;
+            box-shadow: 0 1px 0 0 #FFE100 !important;
+        }
+
+        .input-field input:focus + label {
+            color: #FFE100 !important;
+        }
+
+        .input-field input.valid {
+            border-bottom: 1px solid #FF5733; 
+        }
+
+        .input-field input.invalid {
+            border-bottom: 1px solid red;
+        }
+		
+		input.select-dropdown {
+			color: black !important;
+		}
+
+		.dropdown-content li > span {
+			color: black !important;
+		}
+
+		.dropdown-content li:hover > span {
+			background-color: #FFE100;
+			color: black !important;
+		}
+		
+		.label-cliente {
+			margin-top: -10px;
+		}
+	</style>
+</head>
+<body>
+    <div class="navbar">
+		<a th:href="@{/paginainicial}"><img th:src="@{/imagem/logo.jpg}" alt="Logo"/></a>
+        <div class="icons">
+            <a th:href="@{/buscarusuario}" title="Usuário">
+                <span class="material-icons">account_circle</span>
+            </a>
+            <a href="#" onclick="confirmLogout(event)" title="Sair"><span class="material-icons">logout</span></a>
+        </div>
+    </div>
+    <div class="sidebar">
+        <ul>
+            <li><a hth:hrefref="@{/buscarcliente}" title="Cliente" class="active"><span class="material-icons">people</span></a></li>
+            <li><a th:href="@{/buscarproduto}" title="Produto"><span class="material-icons">checkroom</span></a></li>
+            <li><a th:href="@{/buscarpedido}" title="Pedido"><span class="material-icons">list_alt</span></a></li>
+            <li><a th:href="@{/buscarvenda}" title="Venda"><span class="material-icons">attach_money</span></a></li>
+            <li><a th:href="@{/buscarpagamento}" title="Pagamento"><span class="material-icons">payment</span></a></li>
+            <li><a th:href="@{/relatorio}" title="Relatórios"><span class="material-icons">assignment</span></a></li>
+            <li><a th:href="@{/buscarvendedor}" title="Vendedor"><span class="material-icons">support_agent</span></a></li>
+        </ul>
+    </div>
+	<div class="content">
+		<h1>Editar Clientes</h1>
+		<div class="row">
+			<div class="col s12">
+				<ul class="tabs">
+					<li class="tab col s3"><a class="active" href="#cliente">Cliente</a></li>
+					<li class="tab col s3"><a href="#endereco">Endereço</a></li>
+				</ul>
+			</div>
+			<div id="cliente" class="col s12">
+				<div class="center-inputs">
+					<div class="input-field">
+						<input type="text" id="codigo" required>
+						<label for="codigo">Código</label>
+					</div>
+					<div class="input-field">
+						<input type="text" id="nome" required>
+						<label for="nome">Nome</label>
+					</div>
+					<div class="input-field">
+						<label class="label-cliente">Forma de pagamento</label>
+					</div>
+					<div class="input-field checkbox-container">
+			
+						<div class="checkbox-options">
+							<label>
+								<input type="checkbox" class="filled-in" id="pix" />
+								<span>Pix</span>
+							</label>
+							<label>
+								<input type="checkbox" class="filled-in" id="dinheiro" />
+								<span>Dinheiro</span>
+							</label>
+							<label>
+								<input type="checkbox" class="filled-in" id="credito" />
+								<span>Crédito</span>
+							</label>
+							<label>
+								<input type="checkbox" class="filled-in" id="debito" />
+								<span>Débito</span>
+							</label>
+							<label>
+								<input type="checkbox" class="filled-in" id="ted" />
+								<span>TED</span>
+							</label>
+						</div>
+					</div>
+					<div class="input-field">
+						<select id="tipo_entrega" required>
+							<option value="" disabled selected>Escolha uma opção</option>
+							<option value="retirada">Retirada</option>
+							<option value="sedex">Sedex</option>
+							<option value="transportadora">Transportadora</option>
+							<option value="carro">Carro</option>
+						</select>
+						<label for="tipo_entrega">Tipo de Entrega</label>
+					</div>
+					<div class="input-field">
+						<input type="text" id="observacoes" required>
+						<label for="observacoes">Observações</label>
+					</div>
+				</div>
+			</div>
+			<div id="endereco" class="col s12">
+				<div class="center-inputs">
+					<div class="input-field">
+						<input type="text" id="logadouro" required>
+						<label for="logadouro">Logadouro</label>
+					</div>
+					<div class="input-field">
+						<input type="text" id="cidade" required>
+						<label for="cidade">Cidade</label>
+					</div>
+					<div class="input-field">
+						<input type="text" id="estado" required>
+						<label for="estado">Estado</label>
+					</div>
+					<div class="input-field">
+						<input type="text" id="cep" required>
+						<label for="cep">CEP</label>
+					</div>
+					<button class="btn waves-effect waves-light" type="button" onclick="updateCliente()">Salvar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script th:src="@{/js/alterarcliente.js}"></script>
+</body>
+</html>

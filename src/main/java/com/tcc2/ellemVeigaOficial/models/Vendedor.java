@@ -35,5 +35,5 @@ public class Vendedor {
 
     @Enumerated(EnumType.STRING)
 	@Column(name = "tipsta_vend", length = 25)
-    private TipoStatus statusVenda;
+    private TipoStatus statusVendedor;
 }

@@ -30,8 +30,10 @@ public class Cliente {
 
     @Column(name = "nome_cli", nullable = false, length = 100)
     private String nome;
+
     @Column(name = "sobrenome_cli", length = 100)
     private String sobrenome;
+    
     @Column(name = "observacao_cli", length = 255)
     private String observacao;
 

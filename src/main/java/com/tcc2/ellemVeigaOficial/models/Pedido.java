@@ -1,7 +1,6 @@
 package com.tcc2.ellemVeigaOficial.models;
 
 import java.util.Date;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,16 +30,22 @@ public class Pedido {
 	
 	@Column(name = "data_ped", nullable = false, length = 100)
     private Date data;
+
 	@Column(name = "descrevend_ped", length = 100)
     private Float desconto_revendedor;
+
 	@Column(name = "frete_ped", length = 100)
     private Float frete;
+
 	@Column(name = "valtot_ped", nullable = false, length = 100)
     private Float valor_total;
+
 	@Column(name = "valent_ped", nullable = false, length = 100)
     private Float valor_entrada;
+
 	@Column(name = "qtdparcela_ped", nullable = false, length = 100)
     private int qtd_parcela;
+
 	@Column(name = "dataent_ped", length = 100)
     private Date data_entrega;
 

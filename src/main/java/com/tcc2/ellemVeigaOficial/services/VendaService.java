@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import com.tcc2.ellemVeigaOficial.models.Venda;
 import com.tcc2.ellemVeigaOficial.repositories.VendaRepository;
+import java.util.Date;
 
 @Service
 public class VendaService {
@@ -35,4 +36,9 @@ public class VendaService {
         venda.setId(id);
         return repository.save(venda);
     }
+
+    public List<Venda> buscarVendas(Long idVenda, String nomeCliente, Long idPedido, Date dataInicial, Date dataFinal) {
+        return repository.buscarVendas(idVenda, nomeCliente, idPedido, dataInicial, dataFinal);
+    }
+
 }

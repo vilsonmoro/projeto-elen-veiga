@@ -1,6 +1,8 @@
 package com.tcc2.ellemVeigaOficial.services;
 
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 import java.util.List;
 import com.tcc2.ellemVeigaOficial.models.Pedido;
 import com.tcc2.ellemVeigaOficial.repositories.PedidoRepository;
@@ -34,5 +36,9 @@ public class PedidoService {
             throw new RuntimeException("Pedido não encontrado");}
         pedido.setId(id);
         return repository.save(pedido);
+    }
+
+    public List<Pedido> buscarPedidos(Long id, Date dataInicio, Date dataFim) {
+        return repository.buscarPedidos(id, dataInicio, dataFim);
     }
 }

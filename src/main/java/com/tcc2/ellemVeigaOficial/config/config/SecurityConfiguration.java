@@ -23,6 +23,7 @@ public class SecurityConfiguration {
     private UserAuthenticationFilter userAuthenticationFilter;
 
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
+            "/",
             "/login", // Url para fazer login
             "/usuario/cadastro" // Url para criar um usuário
     };
