@@ -26,7 +26,7 @@ public class Venda {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "codigo_ven")
-    private long id;
+    private Long id;
 	@Column(name = "data_ven", nullable = false, length = 100)
     private Date data;
 	@Column(name = "comissao_ven", length = 100)
@@ -38,19 +38,19 @@ public class Venda {
 	@Column(name = "observacao_ven", length = 100)
     private String observacao;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codusu_ven")
 	private Usuario usuario;
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codped_ven")
     private Pedido pedido;
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codcli_ven")
     private Cliente cliente;
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codvend_ven")
     private Vendedor vendedor;
 	

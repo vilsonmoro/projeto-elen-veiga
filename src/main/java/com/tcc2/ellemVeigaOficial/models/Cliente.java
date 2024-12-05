@@ -17,6 +17,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -37,11 +38,11 @@ public class Cliente {
     @Column(name = "observacao_cli", length = 255)
     private String observacao;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "codusu_cli")
     private Usuario usuario;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "codend_cli")
     private Endereco endereco;
 
@@ -53,3 +54,4 @@ public class Cliente {
     @Column(name = "tippag_cli", length = 25)
     private FormaPagamento forma_pagamento; 
 }
+

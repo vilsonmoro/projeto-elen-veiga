@@ -1,5 +1,6 @@
 package com.tcc2.ellemVeigaOficial.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,8 @@ public class ProdutoController {
 
     @PostMapping
     public ResponseEntity<Produto> addProduto(@RequestBody Produto produto){
-        return ResponseEntity.ok(service.addProduto(produto));
+        Produto produtoCriado = service.addProduto(produto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(produtoCriado);
     }
 
     @GetMapping("/{id}")

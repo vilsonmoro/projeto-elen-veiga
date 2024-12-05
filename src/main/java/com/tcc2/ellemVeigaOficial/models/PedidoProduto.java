@@ -23,7 +23,7 @@ public class PedidoProduto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "codigo_pp")
-    private long id;
+    private Long id;
 	
 	@Column(name = "qtd_pp", nullable = false, length = 100)
     private int quatidade;
@@ -40,11 +40,11 @@ public class PedidoProduto {
     @Column(name = "desconto_pp", length = 100)
     private Float desconto;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codpro_pp", nullable = false)
     private Produto produto;
     
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codped_pp", nullable = false)
 	private Pedido pedido;
 }

@@ -23,7 +23,7 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "codigo_pro")
-    private long id;
+    private Long id;
 	
 	@Column(name = "nome_pro", nullable = false, length = 100)
     private String nome;
@@ -64,7 +64,7 @@ public class Produto {
 	@Column(name = "valorvenda_pro", length = 100)
     private Float valorVenda;
     
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "codusu_pro")
     private Usuario usuario;
 }

@@ -21,7 +21,7 @@ public class Vendedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "codigo_vend")
-    private long id;
+    private Long id;
 	@Column(name = "nome_vend", nullable = false, length = 100)
     private String nome;
 	@Column(name = "sobrenome_vend", length = 100)

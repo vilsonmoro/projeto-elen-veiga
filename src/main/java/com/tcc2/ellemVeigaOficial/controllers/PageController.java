@@ -1,10 +1,17 @@
 package com.tcc2.ellemVeigaOficial.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.tcc2.ellemVeigaOficial.config.authentication.JwtTokenService;
 
 @Controller
 public class PageController {
+    @Autowired
+    private JwtTokenService jwtTokenService;
     
     @GetMapping("/login")
     public String login() {
@@ -12,8 +19,16 @@ public class PageController {
     }
 
     @GetMapping("/paginainicial")
-    public String paginainicial() {
-        return "paginainicial"; 
+    public String paginainicial(@RequestParam(value = "token", required = false) String token, Model model) {
+        // Verifica se o token foi passado
+        if (token == null || !jwtTokenService.validarToken(token)) {
+            // Caso o token seja inválido ou não exista, redireciona ou mostra um erro
+            return "redirect:/login"; // Ou alguma outra página de erro
+        }
+
+        // Se o token for válido, processa a lógica para a página inicial
+        model.addAttribute("mensagem", "Bem-vindo à página inicial!");
+        return "paginainicial";  // Retorna a página de sucesso
     }
 
     @GetMapping("/relatorio")

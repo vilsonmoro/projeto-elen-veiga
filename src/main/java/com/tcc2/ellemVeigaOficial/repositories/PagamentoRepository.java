@@ -10,12 +10,13 @@ import java.util.Date;
 
 @Repository
 public interface PagamentoRepository extends JpaRepository<Pagamento, Long>{
+       
     @Query("SELECT p FROM Pagamento p WHERE " +
            "(:codigo IS NULL OR p.id = :codigo) AND " + 
            "(:nomeCliente IS NULL OR p.cliente.nome LIKE %:nomeCliente%) AND " + 
            "(:codigoPedido IS NULL OR p.pedido.id = :codigoPedido) AND " + 
            "(:startDate IS NULL OR p.data BETWEEN :startDate AND :endDate)")
-    List<Pagamento> findPagamentos(@Param("codigo") Long codigo,
+    List<Pagamento> buscarPagamentos(@Param("codigo") Long codigo,
                                     @Param("nomeCliente") String nomeCliente,
                                     @Param("codigoPedido") Long codigoPedido,
                                     @Param("startDate") Date startDate,

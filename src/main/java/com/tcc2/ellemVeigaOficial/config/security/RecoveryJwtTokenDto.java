@@ -1,4 +1,4 @@
-package com.tcc2.ellemVeigaOficial.models.security;
+package com.tcc2.ellemVeigaOficial.config.security;
 
 public record RecoveryJwtTokenDto(String token) {
 }

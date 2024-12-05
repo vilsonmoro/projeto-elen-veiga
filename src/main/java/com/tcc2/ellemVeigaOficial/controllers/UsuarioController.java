@@ -44,6 +44,7 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
         try {
+            usuario.setSenha(encoder.encode(usuario.getSenha()));
             Usuario updateUsuario = service.update(id, usuario);
             return ResponseEntity.ok(updateUsuario);
         } catch (RuntimeException e){

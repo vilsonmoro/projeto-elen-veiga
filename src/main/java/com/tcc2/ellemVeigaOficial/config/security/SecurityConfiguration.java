@@ -1,4 +1,4 @@
-package com.tcc2.ellemVeigaOficial.config.config;
+package com.tcc2.ellemVeigaOficial.config.security;
 
 import com.tcc2.ellemVeigaOficial.config.authentication.UserAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,29 +19,34 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfiguration {
 
+    private final UserAuthenticationFilter userAuthenticationFilter;
+
     @Autowired
-    private UserAuthenticationFilter userAuthenticationFilter;
+    public SecurityConfiguration(UserAuthenticationFilter userAuthenticationFilter) {
+        this.userAuthenticationFilter = userAuthenticationFilter;
+    }
 
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
             "/",
-            "/login", // Url para fazer login
-            "/usuario/cadastro" // Url para criar um usuário
+            "/login",
+            "/css/**", // Permitir acesso aos CSS 
+            "/js/**", // Permitir acesso aos JS 
+            "/images/**", // Permitir acesso às imagens 
+            "/favicon.ico",
+            "/paginainicial",
+            "/cadastrousuario",
+            "/buscarusuario",
+            "/alterarusuario/**"
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        // Desativa a proteção contra CSRF
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
-        // Configura a política de criação de sessão como stateless
-        httpSecurity.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        // Habilita a autorização para as requisições HTTP
-        httpSecurity.authorizeHttpRequests(auth -> auth
-                .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
-                .anyRequest().authenticated()
-        );
-        // Adiciona o filtro de autenticação de usuário que criamos, antes do filtro de segurança padrão do Spring Security
-        httpSecurity.addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
+        httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 

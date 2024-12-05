@@ -23,7 +23,7 @@ public class ProdutoVenda {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "codigo_pv")
-    private long id;
+    private Long id;
 	@Column(name = "qtd_pv", nullable = false, length = 100)
     private int quatidade;
 	@Column(name = "tamanho_pv", nullable = false, length = 100)
@@ -35,10 +35,10 @@ public class ProdutoVenda {
 	@Column(name = "observacao_pv", length = 100)
 	private String observacao;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codpro_pv", nullable = false)
     private Produto produto;
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codven_pv", nullable = false)
     private Venda venda;
 }

@@ -19,7 +19,7 @@ public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "codigo_end")
-    private long id;
+    private Long id;
     @Column(name = "logadouro_end", nullable = false, length = 255)
     private String logadouro;
     @Column(name = "cidade_end", length = 100)

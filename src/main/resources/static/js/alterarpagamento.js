@@ -121,4 +121,4 @@ function confirmLogout(event) {
     if (confirmed) {
         window.location.href = "login.html";
     }
-  }
+}

@@ -1,0 +1,256 @@
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #FFE890;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+}
+.navbar img {
+    width: 100px;
+}
+.icons {
+    display: flex;
+    gap: 15px;
+}
+.icons a {
+    color: #000;
+    text-decoration: none;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+		
+.icons span.material-icons {
+    font-size: 35px;
+}
+.sidebar {
+    background-color: #FFE890;
+    width: 140px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 60px;
+}
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+.sidebar li {
+    text-align: center;
+    margin-bottom: 38px;
+}
+.sidebar a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+	line-height: 1;
+    color: #000000;
+}
+.sidebar a:hover {
+    background-color: #FFE100;
+    border-radius: 5px;
+}
+.sidebar span.material-icons {
+    font-size: 40px;
+    transform: translateY(4px);
+}
+		
+.sidebar a.active {
+	background-color: #FFE100;
+	border-radius: 10px;
+	color: #000;
+}
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 100px;
+    padding: 20px;
+    padding-top: 70px;
+    flex: 1;
+}
+.input-field {
+    width: 100%;
+    max-width: 500px;
+}
+.btn {
+    background-color: #FFE100;
+    color: #000;
+	margin-top: 20px;
+}
+.btn:hover {
+    background-color: #FFD700;
+}
+h1 {
+    font-size: 24px;
+    text-align: center;
+    font-weight: bold;
+}
+		
+.password-container {
+	position: relative;
+}
+.eye-icon {
+	cursor: pointer;
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%); 
+	color: #000;
+}
+.observacao-field {
+    height: 250px;
+}
+		
+.tabs {
+	width: 100%;
+	max-width: 600px;
+	margin-top: 20px;
+}
+.tab-content {
+	display: none;
+}
+.tab-content.active {
+	display: block;
+}
+		
+.center-inputs {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-bottom: 20px;
+	}
+	
+.popup {
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+	z-index: 1000;
+}
+.popup-content {
+	background-color: white;
+	margin: 2% auto; 
+	padding: 20px;
+	border: 1px solid #888;
+	width: 500px;
+	max-width: 90%;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.close-btn {
+	color: red;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+		
+td button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: #000000; 
+	padding: 0;
+}
+td button:hover {
+	color: #FFE890;
+}
+		
+.popup-content h2 {
+	font-size: 24px;
+	margin: 0 0 30px;
+}
+		
+.dropdown-content {
+	background-color: #FFE890;
+	color: #000;
+}
+.dropdown-content a {
+	color: #000;
+}
+.dropdown-content a:hover {
+	background-color: #FFE100;
+	color: #000;
+}
+.icons a:hover {
+	background-color: #FFE100;
+	border-radius: 5px; 
+}
+		
+.input-field input:focus {
+    border-bottom: 1px solid #FFE100 !important;
+    box-shadow: 0 1px 0 0 #FFE100 !important;
+}
+.input-field input:focus + label {
+    color: #FFE100 !important;
+}
+.input-field input.valid {
+    border-bottom: 1px solid #FF5733;
+}
+.input-field input.invalid {
+    border-bottom: 1px solid red;
+}
+		
+.button-wrapper {
+	display: flex;
+	justify-content: center;
+	margin-top: 20px;
+}
+.input-field textarea {
+	background-color: white;
+	color: #000;
+}
+.input-field textarea:focus {
+	border-bottom: 1px solid #FFE100 !important;
+	box-shadow: 0 1px 0 0 #FFE100 !important;
+	color: #000;
+}
+.input-field textarea:focus + label {
+	color: #FFE100 !important;
+}
+.input-field textarea:not(:focus) {
+	color: #000;
+}
+.btn-amarelo {
+	background-color: #FFD700 !important;
+	color: #000 !important; 
+}
+input.select-dropdown {
+	color: black !important;
+}	
+.dropdown-content li > span {
+	color: black !important;
+}
+.dropdown-content li:hover > span {
+	background-color: #FFE100;
+	color: black !important;
+}
+.label-pagamento {
+	margin-top: -10px;
+}
+		
+td button:focus,
+td button:active {
+	background-color: transparent; 
+	color: #000;
+}

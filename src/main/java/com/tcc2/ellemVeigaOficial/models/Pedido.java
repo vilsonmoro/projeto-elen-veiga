@@ -26,7 +26,7 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "codigo_ped")
-    private long id;
+    private Long id;
 	
 	@Column(name = "data_ped", nullable = false, length = 100)
     private Date data;
@@ -50,14 +50,14 @@ public class Pedido {
     private Date data_entrega;
 
     @Enumerated(EnumType.STRING)
-	@Column(name = "tippag_ped", length = 25)
+	@Column(name = "status_ped", length = 25)
     private TipoStatus status_pedido;
 		
     @Enumerated(EnumType.STRING)
 	@Column(name = "forpag_ped", length = 25)
     private FormaPagamento forma_pagamento;
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codusu_ped")
 	private Usuario usuario;
 }

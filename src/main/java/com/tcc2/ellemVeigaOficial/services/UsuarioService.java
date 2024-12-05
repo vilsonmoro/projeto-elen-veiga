@@ -1,12 +1,12 @@
 package com.tcc2.ellemVeigaOficial.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.tcc2.ellemVeigaOficial.config.authentication.JwtTokenService;
+import com.tcc2.ellemVeigaOficial.config.security.RecoveryJwtTokenDto;
 import com.tcc2.ellemVeigaOficial.config.userdetails.UserDetailsImpl;
 import com.tcc2.ellemVeigaOficial.models.Login;
-import com.tcc2.ellemVeigaOficial.models.security.RecoveryJwtTokenDto;
-
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,9 +21,7 @@ public class UsuarioService {
 
     private final UsuarioRepository repository;
     private PasswordEncoder passwordEncoder;
-
     private final AuthenticationManager authenticationManager;
-
     private final JwtTokenService jwtTokenService;
     
 
@@ -42,7 +40,7 @@ public class UsuarioService {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        return new RecoveryJwtTokenDto(jwtTokenService.generateToken(userDetails));
+        return new RecoveryJwtTokenDto(jwtTokenService.gerarToken(userDetails));
     }
 
     public boolean checkPassword(String rawPassword, String encodedPassword) {

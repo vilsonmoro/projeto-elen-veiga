@@ -1,6 +1,7 @@
 package com.tcc2.ellemVeigaOficial.controllers;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,7 @@ public class PedidoController {
 
     @PostMapping
     public ResponseEntity<Pedido> addPedido(@RequestBody Pedido pedido){
-        return ResponseEntity.ok(service.addPedido(pedido));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.addPedido(pedido));
     }
 
     @GetMapping("/{id}")
@@ -49,8 +50,9 @@ public class PedidoController {
             return ResponseEntity.notFound().build();
         }
     }
+    
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePedido(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

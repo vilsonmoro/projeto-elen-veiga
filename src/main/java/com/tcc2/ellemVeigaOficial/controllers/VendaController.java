@@ -1,6 +1,8 @@
 package com.tcc2.ellemVeigaOficial.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,16 +24,14 @@ import java.util.Date;
 @RestController
 @RequestMapping("/venda")
 public class VendaController {
+    @Autowired
     private VendaService service;
+    @Autowired
     private FluxoCaixaService fluxoservice;
-
-    private VendaController(VendaService service){
-        this.service = service;
-    }
 
     @PostMapping
     public ResponseEntity<Venda> addVenda(@RequestBody Venda venda){
-        return ResponseEntity.ok(service.addVenda(venda));
+       return ResponseEntity.status(HttpStatus.CREATED).body(service.addVenda(venda));
     }
 
     @GetMapping("/{id}")

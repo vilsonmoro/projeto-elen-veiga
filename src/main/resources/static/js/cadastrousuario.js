@@ -69,13 +69,21 @@ document.querySelector('.btn').addEventListener('click', function(e) {
     })
     .then(data => {
         alert('Usuário cadastrado com sucesso!');
-        // Aqui você pode redirecionar ou limpar o formulário, se necessário
+        
+        // Limpar os campos do formulário após a confirmação
+        document.getElementById('usuario').value = '';
+        document.getElementById('nome').value = '';
+        document.getElementById('sobrenome').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('senha').value = '';
+        document.getElementById('confirmar-senha').value = '';
     })
     .catch(error => {
         console.error('Erro:', error);
         alert('Houve um problema ao cadastrar o usuário.');
     });
 });
+
 
 function togglePasswordVisibility(inputId) {
     const input = document.getElementById(inputId);

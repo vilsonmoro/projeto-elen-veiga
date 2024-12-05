@@ -36,6 +36,7 @@ public class ClienteController {
         }
         return ResponseEntity.ok(cliente);
     }
+    
 
     @PostMapping
     public ResponseEntity<Cliente> addCliente(@RequestBody Cliente cliente){
