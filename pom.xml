@@ -11,7 +11,7 @@
 	<groupId>com.tcc2</groupId>
 	<artifactId>ellemVeigaOficial</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>ellemVeigaOficial</name>
 	<description>Projeto de TCC</description>
 	<url/>
