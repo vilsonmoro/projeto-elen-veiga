@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Venda</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/cadastrovenda.css">
+	
+</head>
+<body>
+    <div class="navbar">
+        <a href="/paginainicial"><img src="/imagem/logo.jpg" alt="Logo"/></a>
+        <div class="icons">
+            <a href="/buscarusuario" title="Usuário">
+                <span class="material-icons">account_circle</span>
+            </a>
+            <a href="#" onclick="confirmLogout(event)" title="Sair"><span class="material-icons">logout</span></a>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <ul>
+            <li><a href="/buscarcliente" title="Cliente"><span class="material-icons">people</span></a></li> 
+            <li><a href="/buscarproduto" title="Produto"><span class="material-icons">checkroom</span></a></li> 
+            <li><a href="/buscarpedido" title="Pedido"><span class="material-icons">list_alt</span></a></li> 
+            <li><a href="/buscarvenda" title="Venda" class="active"><span class="material-icons">attach_money</span></a></li>
+            <li><a href="/buscarpagamento" title="Pagamento"><span class="material-icons">payment</span></a></li>
+            <li><a href="/relatorio" title="Relatórios"><span class="material-icons">assignment</span></a></li>
+            <li><a href="/buscarvendedor" title="Vendedor"><span class="material-icons">support_agent</span></a></li>
+        </ul>
+    </div>
+	<div class="content">
+		<h1>Cadastro de Venda</h1>
+		<div class="row">
+			<div class="col s12">
+				<ul class="tabs">
+					<li class="tab col s3"><a class="active" href="#venda">Venda</a></li>
+					<li class="tab col s3"><a href="#produto">Produto</a></li>
+					<li class="tab col s3"><a href="#pagamento">Pagamento</a></li>
+				</ul>
+			</div>
+			<div id="venda" class="col s12">
+				<div class="center-inputs">
+					<div class="input-field">
+						<input type="text" id="codigo">
+						<label for="codigo">Código</label>
+					</div>
+					<div class="input-field">
+						<input type="text" id="cliente">
+						<label for="cliente">Cliente</label>
+					</div>
+					<div class="input-field">
+						<input type="text" id="pedido">
+						<label for="pedido">Pedido</label>
+					</div>
+					<div class="input-field">
+						<input type="date" id="data" required>
+						<label for="data">Data *</label>
+					</div>
+					<div class="input-field">
+						<input type="text" id="observacao">
+						<label for="observacao">Observações</label>
+					</div>
+				</div>
+			</div>
+			<div id="produto" class="col s12">
+				<div class="center-inputs">
+					<button id="addRegistro" class="btn">Adicionar Produto</button>
+				</div>
+				
+				<table>
+					<thead>
+						<tr>
+							<th>Nome</th>
+							<th>Quantidade</th>
+							<th>Tamanho</th>
+							<th>Valor Unitário</th>
+							<th>Desconto</th>
+							<th>Observação</th>
+							<th>Ações</th>
+						</tr>
+					</thead>
+					<tbody id="tabelaRegistros">
+						<!-- Os registros serão inseridos aqui -->
+					</tbody>
+				</table>
+					<div id="popup" class="popup">
+						<div class="popup-content">
+							<span class="close-btn">&times;</span>
+							<h2>Produto</h2>
+							<form id="produtoForm">
+								<div class="input-field">
+									<input type="text" id="nome" required>
+									<label for="nome">Nome *</label>
+								</div>
+								<div class="input-field">
+									<input type="number" id="quantidade" required>
+									<label for="quantidade">Quantidade *</label>
+								</div>
+								<div class="input-field">
+									<input type="text" id="tamanho" required>
+									<label for="tamanho">Tamanho *</label>
+								</div>
+								<div class="input-field">
+									<input type="number" id="valor" required>
+									<label for="valor">Valor Unitário *</label>
+								</div>
+								<div class="input-field">
+									<input type="number" id="desconto">
+									<label for="desconto">Desconto</label>
+								</div>
+								<div class="input-field">
+									<textarea id="observacaopopup" class="materialize-textarea"></textarea>
+									<label for="observacao">Observação</label>
+								</div>
+								<div class="button-wrapper">
+									<button type="submit" class="btn">Salvar</button>
+								</div>
+							</form>
+						</div>
+					</div>
+			</div>
+			<div id="pagamento" class="col s12">
+				<div class="center-inputs">
+					<div class="input-field">
+						<input type="text" id="valortot" required>
+						<label for="valortot">Valor total *</label>
+					</div>
+					<div class="input-field">
+						<label class="label-pagamento">Forma de pagamento *</label>
+					</div>
+					<div class="input-field checkbox-container">
+						<div class="checkbox-options">
+							<label>
+								<input type="checkbox" class="filled-in" id="pix" />
+								<span>Pix</span>
+							</label>
+							<label>
+								<input type="checkbox" class="filled-in" id="dinheiro" />
+								<span>Dinheiro</span>
+							</label>
+							<label>
+								<input type="checkbox" class="filled-in" id="credito" />
+								<span>Crédito</span>
+							</label>
+							<label>
+								<input type="checkbox" class="filled-in" id="debito" />
+								<span>Débito</span>
+							</label>
+							<label>
+								<input type="checkbox" class="filled-in" id="ted" />
+								<span>TED</span>
+							</label>
+						</div>
+					</div>
+					<div class="input-field">
+						<input type="text" id="vendedor">
+						<label for="vendedor">Vendedor</label>
+					</div>
+					<div class="input-field">
+						<input type="text" id="comissao">
+						<label for="comissao">Comissão</label>
+					</div>
+					<button id="cadastrarBtn" class="btn waves-effect waves-light" type="submit">Cadastrar</button>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="/js/cadastrovenda.js"></script>
+</body>
+</html>

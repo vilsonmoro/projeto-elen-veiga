@@ -34,9 +34,9 @@ public class SecurityConfiguration {
             "/images/**", // Permitir acesso às imagens 
             "/favicon.ico",
             "/paginainicial",
+            "/usuario/cadastro",
             "/cadastrousuario",
-            "/buscarusuario",
-            "/alterarusuario/**"
+            "/buscarusuario"
     };
 
     @Bean
