@@ -1,95 +1,154 @@
-async function updateCliente() {
-    const clienteId = document.getElementById('codigo').value; // ID do cliente
-    const enderecoId = document.getElementById('enderecoId').value; // ID do endereço (oculto)
-
-    if (!clienteId || !enderecoId) {
-        alert('IDs do cliente e do endereço são necessários.');
-        return;
-    }
-
-    const token = localStorage.getItem('token'); // Obtendo o token do localStorage
-
-    try {
-        // Primeiro, obter os dados do cliente
-        const responseCliente = await fetch(`/cliente/${clienteId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}` // Adicionando o token no header
-            }
-        });
-
-        if (!responseCliente.ok) {
-            throw new Error('Erro ao obter dados do cliente');
-        }
-
-        const clienteData = await responseCliente.json();
-
-        // Atualizar os dados do cliente com os novos valores
-        const nome = document.getElementById('nome').value;
-        const tipoEntrega = document.getElementById('tipo_entrega').value;
-        const observacoes = document.getElementById('observacoes').value;
-
-        const formaPagamento = [];
-        ['pix', 'dinheiro', 'credito', 'debito', 'ted'].forEach(paymentMethod => {
-            if (document.getElementById(paymentMethod).checked) {
-                formaPagamento.push(paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1));
-            }
-        });
-
-        const cliente = {
-            ...clienteData,
-            nome,
-            formaPagamento,
-            tipoEntrega,
-            observacoes
-        };
-
-        // Atualizando o cliente
-        const updateResponseCliente = await fetch(`/cliente/${clienteId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(cliente)
-        });
-
-        if (!updateResponseCliente.ok) {
-            throw new Error('Erro ao atualizar cliente');
-        }
-
-        // Atualizando o endereço
-        const endereco = {
-            logradouro: document.getElementById('etqmarca').value,
-            cidade: document.getElementById('etqcomp').value,
-            estado: document.getElementById('tag').value,
-            cep: document.getElementById('refil').value
-        };
-
-        const updateResponseEndereco = await fetch(`/endereco/${enderecoId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(endereco)
-        });
-
-        if (!updateResponseEndereco.ok) {
-            throw new Error('Erro ao atualizar endereço');
-        }
-
-        alert('Cliente e endereço atualizados com sucesso!');
-    } catch (error) {
-        console.error('Erro:', error);
-        alert(error.message);
-    }
-}
-
 function confirmLogout(event) {
     event.preventDefault();
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
-        window.location.href = "login.html";
+        localStorage.clear(); 
+        window.location.href = "/login";
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const clienteData = localStorage.getItem('clienteParaEditar');
+
+    if (!clienteData) {
+        alert('Nenhum cliente selecionado para edição.');
+        window.location.href = '/buscarcliente';
+        return;
+    }
+
+    const cliente = JSON.parse(clienteData);
+    const endereco = cliente.endereco ?? {};
+
+    // Campos simples
+    document.getElementById('codigo').value = cliente.id ?? '';
+    document.getElementById('nome').value = cliente.nome ?? '';
+    document.getElementById('observacoes').value = cliente.observacao ?? '';
+
+    // Campos de endereço
+    document.getElementById('logadouro').value = endereco.logadouro ?? '';
+    document.getElementById('cidade').value = endereco.cidade ?? '';
+    document.getElementById('estado').value = endereco.estado ?? '';
+    document.getElementById('cep').value = endereco.cep ?? '';
+
+    // Forma de pagamento e tipo de entrega estão fora do endereço!
+    const formaPagamentoSelect = document.getElementById('formapagamento');
+    const tipoEntregaSelect = document.getElementById('tipo_entrega');
+
+    if (cliente.forma_pagamento) {
+        formaPagamentoSelect.value = cliente.forma_pagamento;
+    }
+
+    if (cliente.tipo_entrega) {
+        tipoEntregaSelect.value = cliente.tipo_entrega;
+    }
+
+    // Re-inicializar os selects com Materialize
+    M.FormSelect.init(formaPagamentoSelect);
+    M.FormSelect.init(tipoEntregaSelect);
+
+    // Atualizar campos de texto e tabs
+    M.updateTextFields();
+    const tabs = document.querySelectorAll('.tabs');
+    M.Tabs.init(tabs);
+});
+
+document.getElementById('salvarBtn').addEventListener('click', async function (event) {
+    event.preventDefault();
+
+    const clienteData = localStorage.getItem('clienteParaEditar');
+    const userID = localStorage.getItem('userId');
+
+    if (!clienteData || !userID) {
+        alert('Erro: Cliente ou usuário não encontrado.');
+        return;
+    }
+
+    const cliente = JSON.parse(clienteData);
+    const endereco = cliente.endereco ?? {};
+    const enderecoId = endereco.id;
+
+    if (!enderecoId) {
+        alert('Erro: ID do endereço não encontrado.');
+        return;
+    }
+
+    const enderecoAtualizado = {
+        logadouro: document.getElementById('logadouro').value,
+        cidade: document.getElementById('cidade').value,
+        estado: document.getElementById('estado').value,
+        cep: document.getElementById('cep').value,
+        usuario: {
+            id: parseInt(userID)
+        }
+    };
+        
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`/endereco/${enderecoId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(enderecoAtualizado)
+            });
+    
+            if (response.ok) {
+                M.toast({ html: 'Endereço atualizado com sucesso!', classes: 'green' });
+            } else {
+                const erro = await response.json();
+                const errorMsg = errorData.message || errorData.error || 'Erro desconhecido (cliente).';
+                M.toast({ html: `Erro ao atualizar endereço: ${errorMsg}`, classes: 'red' });
+            }
+        } catch (error) {
+            M.toast({ html: `Erro de conexão (endereço): ${error.message}`, classes: 'red' });
+        }
+
+        const clienteId = cliente.id;
+        console.log(clienteId);
+        if (!clienteId) {
+            alert("Erro: ID do cliente não encontrado.");
+            return;
+        }
+
+        const clienteEditado = {
+            nome: document.getElementById('nome').value,
+            observacao: document.getElementById('observacoes').value,
+            tipo_entrega: document.getElementById('tipo_entrega').value,
+            forma_pagamento: document.getElementById('formapagamento').value,
+            usuario: {
+                id: parseInt(userID)
+            },
+            endereco: {
+                id: enderecoId
+            }
+        };
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`/cliente/${clienteId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(clienteEditado)
+            });
+            const responseBody = await response.json();
+            console.log(responseBody);
+
+            if (response.ok) {
+                M.toast({ html: 'Cliente atualizado com sucesso!', classes: 'green' });
+                window.location.href = "/buscarcliente";
+            } else {
+                const errorMsg = responseBody.message || responseBody.error || 'Erro desconhecido (cliente).';
+                M.toast({ html: `Erro ao atualizar cliente: ${errorMsg}`, classes: 'red' });
+            }
+        } catch (error) {
+            M.toast({ html: `Erro de conexão (cliente): ${error.message}`, classes: 'red' });
+        }
+});
+
+window.addEventListener('beforeunload', function () {
+    localStorage.removeItem('clienteParaEditar');
+});

@@ -13,15 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import com.tcc2.ellemVeigaOficial.models.PedidoProduto;
 import com.tcc2.ellemVeigaOficial.services.PedidoProdutoService;
+import lombok.AllArgsConstructor;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/pedidoproduto")
 public class PedidoProdutoController {
     private PedidoProdutoService service;
-
-    private PedidoProdutoController(PedidoProdutoService service){
-        this.service = service;
-    }
 
     @PostMapping
     public ResponseEntity<PedidoProduto> addPedidoProduto(@RequestBody PedidoProduto pedidoProduto){

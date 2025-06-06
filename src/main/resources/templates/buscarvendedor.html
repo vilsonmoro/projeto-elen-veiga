@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendedor</title>
+    <title>Pesquisa de vendedores</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -26,13 +26,12 @@
             <li><a href="/buscarproduto" title="Produto"><span class="material-icons">checkroom</span></a></li>
             <li><a href="/buscarpedido" title="Pedido"><span class="material-icons">list_alt</span></a></li>
             <li><a href="/buscarvenda" title="Venda"><span class="material-icons">attach_money</span></a></li>
-            <li><a href="/buscarpagamento" title="Pagamento"><span class="material-icons">payment</span></a></li>
-            <li><a href="/relatorio" title="Relatórios"><span class="material-icons">assignment</span></a></li>
+            <li><a href="/relatorio" title="Relatório"><span class="material-icons">assignment</span></a></li>
             <li><a href="/buscarvendedor" title="Vendedor" class="active"><span class="material-icons">support_agent</span></a></li>
         </ul>
     </div>
     <div class="content">
-        <h1>Pesquisa de Vendedor</h1>
+        <h1>Pesquisa de Vendedores</h1>
 		
 		<div class="input-field">
             <input type="text" id="codigo" required>
@@ -54,7 +53,7 @@
         <div class="button-container">
             <button class="btn waves-effect waves-light" type="button" onclick="searchVendedor()">Pesquisar</button>
             <button class="btn waves-effect waves-light" type="button" onclick="clearSearch()">Limpar</button>
-            <button class="btn waves-effect waves-light" type="button" th:onclick="updateVendedor('${vendedor.codigo}')">Cadastrar Vendedor</button>
+            <button class="btn waves-effect waves-light" type="button" onclick="window.location.href='cadastrovendedor'">Cadastrar Vendedor</button>
         </div>
 
         <table id="resultsTable">
@@ -78,8 +77,7 @@
             <button id="nextButton" onclick="changePage(1)">Próximo</button>
         </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="/js/buscarvendedor.js"></script>
+    <script src="/js/buscarvendedor.js" defer></script>
 </body>
 </html>

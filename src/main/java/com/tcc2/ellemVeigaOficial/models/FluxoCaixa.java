@@ -9,9 +9,12 @@ import lombok.Data;
 @Builder
 public class FluxoCaixa {
     private LocalDate data;
-    private Long idProduto;
+    private String nomeProduto;
+    private String nomeCliente;
     private Long idVenda;
     private Float desconto;
     private Float valor;
-    private String tipo; // "entrada" ou "saida"
+    private Float valorSemComissao;
+    private FormaPagamento formaPagamento;
+    private String tipo;
 }

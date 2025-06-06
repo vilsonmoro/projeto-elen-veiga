@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import com.tcc2.ellemVeigaOficial.models.FluxoCaixa;
+import com.tcc2.ellemVeigaOficial.models.FormaPagamento;
 import com.tcc2.ellemVeigaOficial.models.Venda;
 import com.tcc2.ellemVeigaOficial.services.FluxoCaixaService;
 import com.tcc2.ellemVeigaOficial.services.VendaService;
@@ -75,8 +76,11 @@ public class VendaController {
     @GetMapping("/fluxo-caixa")
     public ResponseEntity<List<FluxoCaixa>> relatorioFluxoCaixa(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dataInicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dataFim) {
-        List<FluxoCaixa> relatorio = fluxoservice.gerarRelatorioFluxoCaixa(dataInicio, dataFim);
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dataFim,
+            @RequestParam(required = false) FormaPagamento formaPagamento) {
+                
+        List<FluxoCaixa> relatorio = fluxoservice.gerarRelatorioFluxoCaixa(dataInicio, dataFim, formaPagamento);
         return ResponseEntity.ok(relatorio);
     }
+    
 }

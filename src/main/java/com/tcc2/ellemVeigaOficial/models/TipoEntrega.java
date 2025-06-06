@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum TipoEntrega {
     CARRO("Carro"),
     SEDEX("SEDEX"),
-    PAC("PAC"),
+    RETIRADA("Retirada"),
     TRANSPORTADORA("Transportadora");
 
     private final String descricao;

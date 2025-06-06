@@ -77,9 +77,11 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
         const confirmed = confirm("Você deseja realmente sair da aplicação?");
         if (confirmed) {
-            window.location.href = "login.html";
+            localStorage.clear(); // Limpa todas as informações do localStorage
+            window.location.href = "/login";
         }
     }
+    
 
     function exportPdf() {
         window.open('/export-pdf', '_blank');

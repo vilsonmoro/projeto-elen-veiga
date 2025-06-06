@@ -47,8 +47,7 @@ public class ProdutoService {
         produto.setId(id);
 
         if (produto.getUsuario() != null && produto.getUsuario().getId() != null) {
-            Usuario usuario = usuarioRepository.findById(produto.getUsuario().getId())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            Usuario usuario = usuarioRepository.findById(produto.getUsuario().getId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
             produto.setUsuario(usuario);
         }
 

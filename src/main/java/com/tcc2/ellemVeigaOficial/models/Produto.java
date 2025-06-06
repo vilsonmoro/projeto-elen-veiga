@@ -57,13 +57,15 @@ public class Produto {
     private Float embalagem;
 	@Column(name = "custo_pro", length = 100)
     private Float custoProduto;
-	@Column(name = "preco_pro", nullable = false, length = 100)
-    private Float precoFinal;
-	@Column(name = "valorsite_pro", length = 100)
-    private Float valorSite;
-	@Column(name = "valorvenda_pro", length = 100)
-    private Float valorVenda;
-    
+	@Column(name = "fatormult_pro", nullable = false, length = 100)
+    private Float fatormult;
+	@Column(name = "valoratacado_pro", length = 100)
+    private Float valoratacado;
+	@Column(name = "valorvarejo_pro", length = 100)
+    private Float valorvarejo;
+    @Column(name = "deslocamento_pro", length = 100)
+    private Float deslocamento;
+
 	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "codusu_pro")
     private Usuario usuario;

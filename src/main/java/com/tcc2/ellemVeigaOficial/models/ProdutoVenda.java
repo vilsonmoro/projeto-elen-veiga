@@ -30,10 +30,15 @@ public class ProdutoVenda {
     private String tamanho;
 	@Column(name = "desconto_pv", length = 100)
     private Float desconto;
-	@Column(name = "valor_pv", length = 100)
-    private Float valor_total;
 	@Column(name = "observacao_pv", length = 100)
 	private String observacao;
+
+	@Column(name = "valortot_pv", length = 100)
+    private Double valorTotal;
+	@Column(name = "valoruni_pv", length = 100)
+    private Float valorUnitario;
+	@Column(name = "nome_pv", nullable = false, length = 100)
+    private String nome;
 
 	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codpro_pv", nullable = false)

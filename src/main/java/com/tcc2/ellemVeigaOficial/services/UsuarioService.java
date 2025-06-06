@@ -1,36 +1,25 @@
 package com.tcc2.ellemVeigaOficial.services;
 
 import java.util.List;
-import java.util.Optional;
-
 import com.tcc2.ellemVeigaOficial.config.authentication.JwtTokenService;
 import com.tcc2.ellemVeigaOficial.config.security.RecoveryJwtTokenDto;
 import com.tcc2.ellemVeigaOficial.config.userdetails.UserDetailsImpl;
 import com.tcc2.ellemVeigaOficial.models.Login;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.tcc2.ellemVeigaOficial.models.Usuario;
 import com.tcc2.ellemVeigaOficial.repositories.UsuarioRepository;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Service
 public class UsuarioService {
 
     private final UsuarioRepository repository;
-    private PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
-    
-
-    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder, JwtTokenService jwtTokenService, AuthenticationManager authenticationManager){
-        this.repository = repository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenService = jwtTokenService;
-        this.authenticationManager = authenticationManager;
-    }
 
     public RecoveryJwtTokenDto authenticateUser(Login loginUserDto) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
@@ -41,15 +30,6 @@ public class UsuarioService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         return new RecoveryJwtTokenDto(jwtTokenService.gerarToken(userDetails));
-    }
-
-    public boolean checkPassword(String rawPassword, String encodedPassword) {
-        return passwordEncoder.matches(rawPassword, encodedPassword);
-    }
-    
-    public Usuario salvarUsuario(Usuario usuario) {
-        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-        return repository.save(usuario);
     }
 
     public Usuario addUsuario(Usuario usuario){

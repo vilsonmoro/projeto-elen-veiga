@@ -65,11 +65,11 @@ body {
     background-color: #FFE100;
     border-radius: 5px;
 }
-		
+        
 .sidebar a.active {
-	background-color: #FFE100;
-	border-radius: 10px;
-	color: #000;
+    background-color: #FFE100;
+    border-radius: 10px;
+    color: #000;
 }
 .sidebar span.material-icons {
     font-size: 40px;
@@ -92,10 +92,18 @@ body {
 .btn {
     background-color: #FFE100;
     color: #000;
+    transition: transform 160ms linear !important;
+    cursor: pointer !important;
 }
 .btn:hover {
-    background-color: #FFD700;
+    transform: scale(1.05) !important;
+    background-color: #FFE890 !important;
 }
+
+.btn:active {
+    transform: scale(0.98) !important;
+}
+
 h1 {
     font-size: 24px;
     text-align: center;
@@ -149,25 +157,24 @@ th {
 }
 .action-button .material-icons {
     font-size: 24px;
-}
-		
+}       
 .dropdown-content {
-	background-color: #FFE890;
-	color: #000;
+    background-color: #FFE890;
+    color: #000;
 }
 .dropdown-content a {
-	color: #000;
+    color: #000;
 }
 .dropdown-content a:hover {
-	background-color: #FFE100;
-	color: #000; 
+    background-color: #FFE100;
+    color: #000; 
 }
 .icons a:hover {
-	background-color: #FFE100;
-	border-radius: 5px;
+    background-color: #FFE100;
+    border-radius: 5px;
 }
 #userDropdown li a {
-	color: #000;
+    color: #000;
 }
 .input-field input:focus {
     border-bottom: 1px solid #FFE100 !important;
@@ -181,10 +188,9 @@ th {
 }
 .input-field input.invalid {
     border-bottom: 1px solid red; 
-}
-		
+}     
 td button:focus,
 td button:active {
-	background-color: transparent; 
-	color: #000;
+    background-color: transparent; 
+    color: #000;
 }

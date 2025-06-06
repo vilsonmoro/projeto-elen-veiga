@@ -1,5 +1,6 @@
 package com.tcc2.ellemVeigaOficial.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,18 +18,24 @@ import java.util.Date;
 import com.tcc2.ellemVeigaOficial.models.Pedido;
 import com.tcc2.ellemVeigaOficial.services.PedidoService;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @RestController
 @RequestMapping("/pedido")
 public class PedidoController {
+    @Autowired
     private PedidoService service;
 
-    private PedidoController(PedidoService service){
-        this.service = service;
-    }
-
-    @PostMapping
+    /*@PostMapping
     public ResponseEntity<Pedido> addPedido(@RequestBody Pedido pedido){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addPedido(pedido));
+    }*/
+
+    @PostMapping
+    public ResponseEntity<Pedido> criarPedido(@RequestBody Pedido pedido) {
+        Pedido salvo = service.salvar(pedido);
+        return ResponseEntity.ok(salvo);
     }
 
     @GetMapping("/{id}")

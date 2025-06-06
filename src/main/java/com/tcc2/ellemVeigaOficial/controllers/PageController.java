@@ -2,9 +2,7 @@ package com.tcc2.ellemVeigaOficial.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tcc2.ellemVeigaOficial.config.authentication.JwtTokenService;
 
@@ -19,15 +17,7 @@ public class PageController {
     }
 
     @GetMapping("/paginainicial")
-    public String paginainicial(@RequestParam(value = "token", required = false) String token, Model model) {
-        // Verifica se o token foi passado
-        if (token == null || !jwtTokenService.validarToken(token)) {
-            // Caso o token seja inválido ou não exista, redireciona ou mostra um erro
-            return "redirect:/login"; // Ou alguma outra página de erro
-        }
-
-        // Se o token for válido, processa a lógica para a página inicial
-        model.addAttribute("mensagem", "Bem-vindo à página inicial!");
+    public String paginainicial (){
         return "paginainicial";  // Retorna a página de sucesso
     }
 
@@ -41,37 +31,38 @@ public class PageController {
         return "fluxocaixa";
     }
 
-    @GetMapping("/editarcliente")
+    @GetMapping("/alterarcliente")
     public String alterarcliente() {
         return "alterarcliente"; 
     }
 
-    @GetMapping("/editarpagamento")
+    @GetMapping("/alterarpagamento")
     public String alterarpagamento() {
         return "alterarpagamento"; 
     }
 
-    @GetMapping("/editarpedido")
+    @GetMapping("/alterarpedido")
     public String alterarpedido() {
         return "alterarpedido";
     }
 
-    @GetMapping("/editarproduto")
+    @GetMapping("/alterarproduto")
     public String alterarproduto() {
         return "alterarproduto"; 
     }
 
-    @GetMapping("/editarusuario")
+    @GetMapping("/alterarusuario")
     public String alterarusuario() {
         return "alterarusuario"; 
     }
 
-    @GetMapping("/editarvenda")
+
+    @GetMapping("/alterarvenda")
     public String alterarvenda() {
         return "alterarvenda";
     }
 
-    @GetMapping("/editarvendedor")
+    @GetMapping("/alterarvendedor")
     public String alterarvendedor() {
         return "alterarvendedor"; 
     }
@@ -110,6 +101,7 @@ public class PageController {
     public String buscarvendedor() {
         return "buscarvendedor"; 
     }
+    
 
     @GetMapping("/cadastrocliente")
     public String cadastrocliente() {
@@ -146,3 +138,6 @@ public class PageController {
         return "cadastrovendedor"; 
     }
 }
+
+
+

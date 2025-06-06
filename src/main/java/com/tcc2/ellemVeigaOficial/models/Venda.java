@@ -56,9 +56,9 @@ public class Venda {
 	
     @Enumerated(EnumType.STRING)
 	@Column(name = "forpag_ven", length = 25)
-    private FormaPagamento forma_pagamento;
+    private FormaPagamento formaPagamento;
 	
     @Enumerated(EnumType.STRING)
 	@Column(name = "tipent_ven", length = 25)
-    private TipoEntrega tipo_entrega;
+    private TipoEntrega tipoEntrega;
 }

@@ -29,15 +29,19 @@ public class SecurityConfiguration {
     public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
             "/",
             "/login",
-            "/css/**", // Permitir acesso aos CSS 
-            "/js/**", // Permitir acesso aos JS 
-            "/images/**", // Permitir acesso às imagens 
+            "/css/**",
+            "/js/**",
+            "/images/**",
             "/favicon.ico",
             "/paginainicial",
-            "/usuario/cadastro",
-            "/cadastrousuario",
-            "/buscarusuario"
-    };
+            "/fluxocaixa",
+            "/relatorio",
+            "/pedido/**",
+            "/venda/**",
+            "/produtovenda/**",
+            "/buscarvenda",
+            "/produto/**"
+        };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {

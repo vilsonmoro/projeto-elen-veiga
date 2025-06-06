@@ -11,19 +11,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
-
 import com.tcc2.ellemVeigaOficial.models.TipoStatus;
 import com.tcc2.ellemVeigaOficial.models.Vendedor;
 import com.tcc2.ellemVeigaOficial.services.VendedorService;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/vendedor")
 public class VendedorController {
     private VendedorService service;
-
-    private VendedorController(VendedorService service){
-        this.service = service;
-    }
 
     @PostMapping
     public ResponseEntity<Vendedor> addVendedor(@RequestBody Vendedor Vendedor){

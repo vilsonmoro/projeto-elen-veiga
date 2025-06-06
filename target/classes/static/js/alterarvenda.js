@@ -9,12 +9,14 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 
         function confirmLogout(event) {
-            event.preventDefault();
-            const confirmed = confirm("Você deseja realmente sair da aplicação?");
-            if (confirmed) {
-                window.location.href = "login.html";
-            }
-        }
+			event.preventDefault();
+			const confirmed = confirm("Você deseja realmente sair da aplicação?");
+			if (confirmed) {
+				localStorage.clear(); // Limpa todas as informações do localStorage
+				window.location.href = "/login";
+			}
+		}
+		
 		
 		document.addEventListener('DOMContentLoaded', function() {
 			var instance = M.Tabs.init(el, options);

@@ -10,18 +10,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Calendar;
 import java.util.List;
+import java.util.Date;
+import com.tcc2.ellemVeigaOficial.dto.VendasPorProdutoDTO;
 import com.tcc2.ellemVeigaOficial.models.ProdutoVenda;
 import com.tcc2.ellemVeigaOficial.services.ProdutoVendaService;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/produtovenda")
 public class ProdutoVendaController {
     private ProdutoVendaService service;
-
-    private ProdutoVendaController(ProdutoVendaService service){
-        this.service = service;
-    }
 
     @PostMapping
     public ResponseEntity<ProdutoVenda> addProdutoVenda(@RequestBody ProdutoVenda produtoVenda){
@@ -60,5 +62,18 @@ public class ProdutoVendaController {
             @RequestParam(required = false) String nomeProduto) {
         List<ProdutoVenda> produtoVendas = service.buscarProdutoVendas(idVenda, nomeProduto);
         return ResponseEntity.ok(produtoVendas);
+    }
+
+    @GetMapping("/vendasmes")
+    public ResponseEntity<List<VendasPorProdutoDTO>> vendasDoMes() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        Date primeiroDia = cal.getTime();
+
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Date ultimoDia = cal.getTime();
+
+        List<VendasPorProdutoDTO> vendas = service.buscarVendasPorProdutoNoPeriodo(primeiroDia, ultimoDia);
+        return ResponseEntity.ok(vendas);
     }
 }

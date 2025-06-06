@@ -40,8 +40,7 @@ public class VendaService {
 
     public Venda addVenda(Venda venda){
         if (venda.getUsuario() != null && venda.getUsuario().getId() != null) {
-            Usuario usuario = usuarioRepository.findById(venda.getUsuario().getId())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            Usuario usuario = usuarioRepository.findById(venda.getUsuario().getId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
             venda.setUsuario(usuario);
         }
 
@@ -88,8 +87,7 @@ public class VendaService {
         venda.setId(id);
 
         if (venda.getUsuario() != null && venda.getUsuario().getId() != null) {
-            Usuario usuario = usuarioRepository.findById(venda.getUsuario().getId())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            Usuario usuario = usuarioRepository.findById(venda.getUsuario().getId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
             venda.setUsuario(usuario);
         }
         

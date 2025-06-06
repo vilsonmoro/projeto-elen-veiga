@@ -27,6 +27,7 @@ public class JwtTokenService {
                     .withIssuedAt(criaDate()) // Define a data de emissão do token
                     .withExpiresAt(expiraDate()) // Define a data de expiração do token
                     .withSubject(user.getUsername()) // Define o assunto do token (neste caso, o nome de usuário)
+                    .withClaim("userId", user.getId())
                     .sign(algorithm); // Assina o token usando o algoritmo especificado, nesse caso HMAC256
         } catch (JWTCreationException exception){
             throw new JWTCreationException("Erro ao gerar token.", exception);

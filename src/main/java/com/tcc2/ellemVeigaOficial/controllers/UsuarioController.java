@@ -25,7 +25,7 @@ public class UsuarioController {
     private UsuarioService service;
     private final PasswordEncoder encoder;
 
-    @PostMapping("cadastro")
+    @PostMapping("/cadastro")
     public ResponseEntity<Usuario> addUsuario(@RequestBody Usuario usuario){
         usuario.setSenha(encoder.encode(usuario.getSenha()));
         return ResponseEntity.ok(service.addUsuario(usuario));

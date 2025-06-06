@@ -1,18 +1,128 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+    const addBtn = document.getElementById('addRegistro');
+    const popup = document.getElementById('popup');
+    const closeBtn = document.querySelector('.close-btn');
     const selectElems = document.querySelectorAll('select');
+    const tabElems = document.querySelectorAll('.tabs');
+
     M.FormSelect.init(selectElems);
 
-    const tabElems = document.querySelectorAll('.tabs');
     M.Tabs.init(tabElems);
+
+    addBtn.addEventListener('click', function () {
+        popup.style.display = 'block';
+    });
+
+    closeBtn.addEventListener('click', function () {
+        popup.style.display = 'none';
+    });
+
+    window.addEventListener('click', function (event) {
+        if (event.target === popup) {
+            popup.style.display = 'none';
+        }
+    });
 });
 
 function confirmLogout(event) {
     event.preventDefault();
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
-        window.location.href = "login.html";
+        localStorage.clear();
+        window.location.href = "/login";
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    setupAutocomplete("cliente", "../cliente/buscar", "cliente-suggestions", "nome");
+    setupAutocomplete("pedido", "../pedido", "pedido-suggestions", "id", true);
+    setupAutocomplete("vendedor", "../vendedor/buscar", "vendedor-suggestions", "nome");
+  });
+  
+  function setupAutocomplete(inputId, url, suggestionId, displayKey, isIdSearch = false) {
+    const input = document.getElementById(inputId);
+    const suggestionBox = document.getElementById(suggestionId);
+
+    // Mostra as sugestões quando o campo recebe foco
+    input.addEventListener("focus", () => {
+        suggestionBox.style.display = 'block';  // Mostra as sugestões
+    });
+
+    // Esconde as sugestões quando o campo perde o foco (com um pequeno atraso)
+    input.addEventListener("blur", () => {
+        setTimeout(() => { 
+            suggestionBox.style.display = 'none';  // Esconde as sugestões
+        }, 200);
+    });
+
+    // Quando o usuário digita, as sugestões são atualizadas
+    input.addEventListener("input", async () => {
+        const query = input.value.trim();
+
+        if (query.length === 0) {
+            suggestionBox.innerHTML = "";
+            suggestionBox.style.display = 'none';  // Esconde as sugestões se o campo estiver vazio
+            return;
+        }
+
+        let endpoint = url;
+        if (isIdSearch) {
+            endpoint += `/${query}`;
+        } else {
+            endpoint += `?nome=${encodeURIComponent(query)}`;
+        }
+
+        try {
+            const res = await fetch(endpoint);
+            let data = await res.json();
+
+            if (!Array.isArray(data)) {
+                data = [data];  // Trata retorno de pedido por ID
+            }
+
+            const top5 = data.slice(0, 5);
+
+            suggestionBox.innerHTML = top5.map(item =>
+                `<div data-id="${item.id}">${item[displayKey]}</div>`
+            ).join("");
+
+            suggestionBox.style.display = 'block';  // Mostra as sugestões se houver resultados
+
+            suggestionBox.querySelectorAll("div").forEach(div => {
+                div.addEventListener("click", () => {
+                    input.value = div.textContent;
+                    localStorage.setItem(`venda_${inputId}_id`, div.dataset.id);
+                    suggestionBox.innerHTML = "";
+                    suggestionBox.style.display = 'none';  // Esconde as sugestões após seleção
+                });
+            });
+
+        } catch (error) {
+            console.error("Erro ao buscar dados:", error);
+        }
+    });
+}
+
+
+
+//Função para preencher a tabela de produtos com os produtos do pedidoproduto
+
+//Função para preencher o campo "valor total" com a soma do valor unitário * quantidade
+
+//Função para preencher a forma de pagamento com a forma de pagamento do cliente
+
+//Função para preencher a comissão com o valor de 10% do valor total
+
+//Função para criar ProdutoVenda
+
+//Função para criar a Venda
+
+  
+
+
+
+
+
 
 // Função para buscar cliente
 async function buscarCliente() {
@@ -106,7 +216,7 @@ async function cadastrarProdutoVenda(vendaId) {
     }));
 }
 
-document.getElementById('cadastrarBtn').addEventListener('click', async function() {
+document.getElementById('cadastrarBtn').addEventListener('click', async function () {
     const nomeProduto = document.getElementById('produto').value; // Supondo que você tenha um campo para o nome do produto
     const produtos = await buscarProdutos(nomeProduto); // Busca produtos antes de cadastrar a venda
 

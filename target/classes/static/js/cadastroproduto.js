@@ -1,68 +1,187 @@
-document.getElementById('cadastrarBtn').addEventListener('click', function() {
-    const confirmed = confirm("Você deseja realmente cadastrar?");
-    if (confirmed) {
-        this.style.backgroundColor = '#FFE100';
-
-        // Coletar os dados dos campos do formulário
-        const produto = {
-            codigo: document.getElementById('codigo').value,
-            nome: document.getElementById('nome').value,
-            peso: document.getElementById('peso').value,
-            modelagem: document.getElementById('modelagem').value,
-            desenvolvimento: document.getElementById('desenvolvimento').value,
-            corte: document.getElementById('corte').value,
-            malha: document.getElementById('malha').value,
-            costura: document.getElementById('costura').value,
-            etqmarca: document.getElementById('etqmarca').value,
-            etqcomp: document.getElementById('etqcomp').value,
-            tag: document.getElementById('tag').value,
-            refil: document.getElementById('refil').value,
-            elastico: document.getElementById('elastico').value,
-            saco: document.getElementById('saco').value,
-            fita: document.getElementById('fita').value,
-            embalagem: document.getElementById('embalagem').value,
-            deslocamento: document.getElementById('deslocamento').value,
-            custo: document.getElementById('custo').value,
-            precototal: document.getElementById('precofinal').value,
-            valorsite: document.getElementById('valorsite').value,
-            valorvenda: document.getElementById('valorvenda').value
-        };
-
-        // Obter o token do local storage
-        const token = localStorage.getItem('token');
-
-        // Fazer a requisição para a API
-        fetch('/produto', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Adicionando o token ao cabeçalho
-            },
-            body: JSON.stringify(produto)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro ao cadastrar produto');
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert('Produto cadastrado com sucesso!');
-            // Aqui você pode redirecionar ou limpar o formulário, se necessário
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Houve um problema ao cadastrar o produto.');
-        });
-    } else {
-        this.style.backgroundColor = ''; // Resetando a cor do botão se não confirmado
-    }
-});
-
 function confirmLogout(event) {
     event.preventDefault();
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
-        window.location.href = "login.html";
+        localStorage.clear();
+        window.location.href = "/login";
     }
-  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var tabs = document.querySelectorAll('.tabs');
+    var instances = M.Tabs.init(tabs);
+
+    var confecTab = document.querySelector('.tabs .tab a[href="#confeccao"]');
+    if (confecTab) {
+        confecTab.click(); 
+    }
+    
+    var tabLinks = document.querySelectorAll('.tabs a');
+    tabLinks.forEach(function (tabLink) {
+        tabLink.addEventListener('click', function () {
+            setTimeout(function () {
+                M.updateTextFields();
+            }, 100);
+        });
+    });
+});
+
+function calcularCusto() {
+    var peso = parseFloat(document.getElementById('peso').value) || 0;
+    var modelagem = parseFloat(document.getElementById('modelagem').value) || 0;
+    var desenvolvimento = parseFloat(document.getElementById('desenvolvimento').value) || 0;
+    var corte = parseFloat(document.getElementById('corte').value) || 0;
+    var malha = parseFloat(document.getElementById('malha').value) || 0;
+    var costura = parseFloat(document.getElementById('costura').value) || 0;
+
+    var etqmarca = parseFloat(document.getElementById('etqmarca').value) || 0;
+    var etqcomp = parseFloat(document.getElementById('etqcomp').value) || 0;
+    var tag = parseFloat(document.getElementById('tag').value) || 0;
+    var refil = parseFloat(document.getElementById('refil').value) || 0;
+    var elastico = parseFloat(document.getElementById('elastico').value) || 0;
+
+    var saco = parseFloat(document.getElementById('saco').value) || 0;
+    var fita = parseFloat(document.getElementById('fita').value) || 0;
+    var embalagem = parseFloat(document.getElementById('embalagem').value) || 0;
+    var deslocamento = parseFloat(document.getElementById('deslocamento').value) || 0;
+
+    var custoProduto = peso + modelagem + desenvolvimento + corte + malha + costura +
+                       etqmarca + etqcomp + tag + refil + elastico + saco + fita + embalagem + deslocamento;
+
+    document.getElementById('custo').value = custoProduto.toFixed(4);  // Exibe até 4 casas decimais
+}
+
+function limparCampos() {
+    const campos = [
+        'nome', 'peso', 'modelagem', 'desenvolvimento', 'corte', 'malha',
+        'costura', 'etqmarca', 'etqcomp', 'tag', 'refil', 'elastico',
+        'saco', 'fita', 'embalagem', 'deslocamento', 'custo', 'precofinal', 'valorsite', 'valorvenda'
+    ];
+
+    campos.forEach(campo => {
+        const element = document.getElementById(campo);
+        if (element) {
+            element.value = '';
+        } else {
+            console.warn(`Elemento com id "${campo}" não encontrado.`);
+        }
+    });
+
+    const tabs = document.querySelector('.tabs'); 
+    const instance = M.Tabs.getInstance(tabs); 
+
+    instance.select('confeccao'); 
+}
+
+
+async function enviarProduto() {
+
+    var nome = document.getElementById('nome').value;
+    var custoProduto = parseFloat(document.getElementById('custo').value) || 0;
+
+    //Validações
+    if (!nome) {
+        M.toast({ html: 'O campo "Nome" é obrigatório.', classes: 'red' });
+        return;
+    }
+
+    if (custoProduto === 0) {
+        M.toast({ html: 'O custo do produto deve ser maior que zero.', classes: 'red' });
+        return;
+    }
+    
+    var peso = parseFloat(document.getElementById('peso').value) || 0;
+    var modelagem = parseFloat(document.getElementById('modelagem').value) || 0;
+    var desenvolvimento = parseFloat(document.getElementById('desenvolvimento').value) || 0;
+    var corte = parseFloat(document.getElementById('corte').value) || 0;
+    var malha = parseFloat(document.getElementById('malha').value) || 0;
+    var costura = parseFloat(document.getElementById('costura').value) || 0;
+
+    var etqmarca = parseFloat(document.getElementById('etqmarca').value) || 0;
+    var etqcomp = parseFloat(document.getElementById('etqcomp').value) || 0;
+    var tag = parseFloat(document.getElementById('tag').value) || 0;
+    var refil = parseFloat(document.getElementById('refil').value) || 0;
+    var elastico = parseFloat(document.getElementById('elastico').value) || 0;
+
+    var saco = parseFloat(document.getElementById('saco').value) || 0;
+    var fita = parseFloat(document.getElementById('fita').value) || 0;
+    var embalagem = parseFloat(document.getElementById('embalagem').value) || 0;
+    var deslocamento = parseFloat(document.getElementById('deslocamento').value) || 0;
+
+    var fatormult = parseFloat(document.getElementById('fatormult').value) || 0;
+    var valorvarejo = parseFloat(document.getElementById('valorvarejo').value) || 0;
+    var valoratacado = parseFloat(document.getElementById('valoratacado').value) || 0;
+
+    var usuarioId = localStorage.getItem('userId');
+
+    var produto = {
+        nome: nome,
+        peso: peso,
+        modelagem: modelagem,
+        desenvolvimento: desenvolvimento,
+        corte: corte,
+        malha: malha,
+        etiquetaMarca: etqmarca,
+        etiquetaComposicao: etqcomp,
+        tag: tag,
+        refilPistola: refil,
+        sacoPlastico: saco,
+        fita: fita,
+        elastico: elastico,
+        precoCostura: costura,
+        embalagem: embalagem,
+        custoProduto: custoProduto,
+        fatormult: fatormult,
+        valorvarejo: valorvarejo,
+        valoratacado: valoratacado,
+        usuario: {
+            id: usuarioId
+        }
+    };
+
+    try {
+        const token = localStorage.getItem('token');
+
+        const response = await fetch('/produto', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(produto),
+        });
+
+        if (response.ok) {
+            M.toast({ html: 'Produto cadastrado com sucesso!', classes: 'green' });
+            limparCampos();
+        } else {
+            const erro = await response.json();
+            const errorMsg = errorData.message || errorData.error || 'Erro desconhecido.';
+            M.toast({ html: `Erro ao cadastrar produto: ${errorMsg}`, classes: 'red' });
+        }
+    } catch (error) {
+        M.toast({ html: `Erro de conexão: ${error.message}`, classes: 'red' });
+    }
+}
+
+function calcularValorVarejoEAtacado() {
+    const custo = parseFloat(document.getElementById('custo').value);
+    const fatorMult = parseFloat(document.getElementById('fatormult').value);
+
+    if (isNaN(custo) || isNaN(fatorMult)) {
+        M.toast({ html: 'Preencha corretamente os campos de custo e fator multiplicador.', classes: 'red darken-2' });
+        return;
+    }
+
+    const valorVarejo = custo + (custo * (fatorMult / 100));
+    document.getElementById('valorvarejo').value = valorVarejo.toFixed(2);
+
+    const valorAtacado = valorVarejo - (valorVarejo * 0.10);
+    document.getElementById('valoratacado').value = valorAtacado.toFixed(2);
+    M.updateTextFields();
+}
+
+document.getElementById('cadastrarBtn').addEventListener('click', function(event) {
+    event.preventDefault(); 
+    enviarProduto();
+});

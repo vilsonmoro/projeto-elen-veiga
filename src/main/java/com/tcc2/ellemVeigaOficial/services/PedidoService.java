@@ -7,51 +7,74 @@ import java.util.Date;
 import java.util.List;
 import com.tcc2.ellemVeigaOficial.models.Pedido;
 import com.tcc2.ellemVeigaOficial.models.Usuario;
+import com.tcc2.ellemVeigaOficial.repositories.ClienteRepository;
 import com.tcc2.ellemVeigaOficial.repositories.PedidoRepository;
 import com.tcc2.ellemVeigaOficial.repositories.UsuarioRepository;
 
 @Service
 public class PedidoService {
     @Autowired
-    private PedidoRepository repository;
+    private PedidoRepository pedidoRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private ClienteRepository clienteRepository;
 
-    public Pedido addPedido(Pedido pedido){
+    /*
+     * public Pedido addPedido(Pedido pedido){
+     * if (pedido.getUsuario() != null && pedido.getUsuario().getId() != null) {
+     * Usuario usuario =
+     * usuarioRepository.findById(pedido.getUsuario().getId()).orElseThrow(() -> new
+     * RuntimeException("Usuário não encontrado"));
+     * pedido.setUsuario(usuario);
+     * }
+     * 
+     * return repository.save(pedido);
+     * }
+     */
+
+    public Pedido salvar(Pedido pedido) {
         if (pedido.getUsuario() != null && pedido.getUsuario().getId() != null) {
-            Usuario usuario = usuarioRepository.findById(pedido.getUsuario().getId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-            pedido.setUsuario(usuario);
+            pedido.setUsuario(usuarioRepository.findById(pedido.getUsuario().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado")));
         }
 
-        return repository.save(pedido);
+        if (pedido.getCliente() != null && pedido.getCliente().getId() != null) {
+            pedido.setCliente(clienteRepository.findById(pedido.getCliente().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado")));
+        }
+
+        return pedidoRepository.save(pedido);
     }
 
-    public Pedido findById(Long id){
-        return repository.findById(id).get();
+    public Pedido findById(Long id) {
+        return pedidoRepository.findById(id).get();
     }
 
-    public List<Pedido> findAll(){
-        return repository.findAll();
+    public List<Pedido> findAll() {
+        return pedidoRepository.findAll();
     }
 
-    public void delete(Long id){
-        repository.deleteById(id);
+    public void delete(Long id) {
+        pedidoRepository.deleteById(id);
     }
 
-    public Pedido update(Long id, Pedido pedido){
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("Pedido não encontrado");}
+    public Pedido update(Long id, Pedido pedido) {
+        if (!pedidoRepository.existsById(id)) {
+            throw new RuntimeException("Pedido não encontrado");
+        }
         pedido.setId(id);
 
         if (pedido.getUsuario() != null && pedido.getUsuario().getId() != null) {
-            Usuario usuario = usuarioRepository.findById(pedido.getUsuario().getId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            Usuario usuario = usuarioRepository.findById(pedido.getUsuario().getId())
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
             pedido.setUsuario(usuario);
         }
 
-        return repository.save(pedido);
+        return pedidoRepository.save(pedido);
     }
 
     public List<Pedido> buscarPedidos(Long id, Date dataInicio, Date dataFim) {
-        return repository.buscarPedidos(id, dataInicio, dataFim);
+        return pedidoRepository.buscarPedidos(id, dataInicio, dataFim);
     }
 }

@@ -3,9 +3,9 @@ package com.tcc2.ellemVeigaOficial.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
-
+import java.util.Date;
+import com.tcc2.ellemVeigaOficial.dto.VendasPorProdutoDTO;
 import com.tcc2.ellemVeigaOficial.models.Produto;
 import com.tcc2.ellemVeigaOficial.models.ProdutoVenda;
 import com.tcc2.ellemVeigaOficial.models.Venda;
@@ -69,5 +69,9 @@ public class ProdutoVendaService {
 
     public List<ProdutoVenda> buscarProdutoVendas(Long idVenda, String nomeProduto) {
         return repository.buscarProdutoVendas(idVenda, nomeProduto);
+    }
+
+    public List<VendasPorProdutoDTO> buscarVendasPorProdutoNoPeriodo(Date dataInicial, Date dataFinal) {
+        return repository.agruparVendasPorNomeProduto(dataInicial, dataFinal);
     }
 }

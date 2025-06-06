@@ -16,7 +16,6 @@ import java.util.List;
 import com.tcc2.ellemVeigaOficial.models.Cliente;
 import com.tcc2.ellemVeigaOficial.services.ClienteService;
 
-
 @RestController
 @RequestMapping("/cliente")
 public class ClienteController {
@@ -37,7 +36,6 @@ public class ClienteController {
         return ResponseEntity.ok(cliente);
     }
     
-
     @PostMapping
     public ResponseEntity<Cliente> addCliente(@RequestBody Cliente cliente){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addCliente(cliente));
@@ -49,7 +47,9 @@ public class ClienteController {
             Cliente updateCliente = service.update(id, cliente);
             return ResponseEntity.ok(updateCliente);
         } catch (RuntimeException e){
-            return ResponseEntity.notFound().build();
+            Cliente erroCliente = new Cliente();
+            erroCliente.setNome("Erro: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroCliente);
         }
     }
 
@@ -60,10 +60,10 @@ public class ClienteController {
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<List<Cliente>> buscarCliente(
+    public ResponseEntity<List<Cliente>> buscarClientes(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String nome) {
-        List<Cliente> clientes = service.buscarCliente(id, nome);
+        List<Cliente> clientes = service.buscarClientes(id, nome);
         return ResponseEntity.ok(clientes);
     }
 }

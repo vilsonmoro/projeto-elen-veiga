@@ -11,6 +11,7 @@ import com.tcc2.ellemVeigaOficial.models.Produto;
 import com.tcc2.ellemVeigaOficial.repositories.PedidoProdutoRepository;
 import com.tcc2.ellemVeigaOficial.repositories.PedidoRepository;
 import com.tcc2.ellemVeigaOficial.repositories.ProdutoRepository;
+import com.tcc2.ellemVeigaOficial.repositories.UsuarioRepository;
 
 @Service
 public class PedidoProdutoService {
@@ -22,6 +23,7 @@ public class PedidoProdutoService {
     private ProdutoRepository produtoRepository;
 
     public PedidoProduto addPedidoProduto(PedidoProduto pedidoProduto){
+
         if (pedidoProduto.getPedido() != null && pedidoProduto.getPedido().getId() != null) {
             Pedido pedido = pedidoRepository.findById(pedidoProduto.getPedido().getId()).orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
             pedidoProduto.setPedido(pedido);

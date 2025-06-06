@@ -5,9 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
     
         const login = document.getElementById('login').value; 
         const password = document.getElementById('password').value;
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     
-        if (!login || (login.trim().length < 3 && !emailPattern.test(login))) {
+        if (!login || login.trim().length < 3) {
             alert('Por favor, insira um email válido ou um nome de usuário (mínimo 3 caracteres).');
             return;
         }
@@ -42,8 +41,16 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.token) {
                 // Salvar o token no localStorage
                 localStorage.setItem('token', data.token);
+                
+                // Decodificar o token JWT para extrair o ID do usuário
+                const decodedToken = JSON.parse(atob(data.token.split('.')[1]));
+                const userId = decodedToken.userId; // O ID do usuário está na claim "userId"
+
+                // Salvar o userId no localStorage
+                localStorage.setItem('userId', userId);
+
                 // Redirecionar para a página inicial
-                window.location.href = `/paginainicial?token=${data.token}`; // ou qualquer página desejada
+                window.location.href = "../paginainicial"; // ou qualquer página desejada
             } else {
                 alert('Erro: Token não recebido.');
             }
@@ -51,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(error => {
             console.error('Erro ao se conectar ao servidor:', error);
             alert('Erro ao se conectar ao servidor: ' + error.message);
-            
         });
     });
 });

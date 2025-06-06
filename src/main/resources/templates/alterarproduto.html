@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produto</title>
+    <title>Editar produto</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -26,21 +26,22 @@
             <li><a href="/buscarproduto" title="Produto" class="active"><span class="material-icons">checkroom</span></a></li>
             <li><a href="/buscarpedido" title="Pedido"><span class="material-icons">list_alt</span></a></li>
             <li><a href="/buscarvenda" title="Venda"><span class="material-icons">attach_money</span></a></li>
-            <li><a href="/buscarpagamento" title="Pagamento"><span class="material-icons">payment</span></a></li>
-            <li><a href="/relatorio" title="Relatórios"><span class="material-icons">assignment</span></a></li>
+            <li><a href="/relatorio" title="Relatório"><span class="material-icons">assignment</span></a></li>
             <li><a href="/buscarvendedor" title="Vendedor"><span class="material-icons">support_agent</span></a></li>
         </ul>
     </div>
 	<div class="content">
-		<h1>Editar Produto</h1>	
+		<h1>Editar Produto</h1>
+		
 		<div class="input-field">
-			<input type="text" id="codigo" required>
+			<input type="text" id="codigo" readonly>
 			<label for="codigo">Código</label>
 		</div>
 		<div class="input-field">
 			<input type="text" id="nome" required>
-			<label for="nome">Nome</label>
-		</div>	
+			<label for="nome">Nome *</label>
+		</div>
+		
 		<div class="row">
 			<div class="col s12">
 				<ul class="tabs">
@@ -53,27 +54,27 @@
 			<div id="confeccao" class="col s12">
 				<div class="center-inputs">
 					<div class="input-field">
-						<input type="text" id="peso" required>
+						<input type="text" id="peso">
 						<label for="peso">Peso</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="modelagem" required>
+						<input type="text" id="modelagem">
 						<label for="modelagem">Modelagem</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="desenvolvimento" required>
+						<input type="text" id="desenvolvimento">
 						<label for="desenvolvimento">Desenvolvimento</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="corte" required>
+						<input type="text" id="corte">
 						<label for="corte">Corte</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="malha" required>
+						<input type="text" id="malha">
 						<label for="malha">Malha</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="costura" required>
+						<input type="text" id="costura">
 						<label for="costura">Costura</label>
 					</div>
 				</div>
@@ -81,23 +82,23 @@
 			<div id="detalhes" class="col s12">
 				<div class="center-inputs">
 					<div class="input-field">
-						<input type="text" id="etqmarca" required>
+						<input type="text" id="etqmarca">
 						<label for="etqmarca">Etiqueta da marca</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="etqcomp" required>
+						<input type="text" id="etqcomp">
 						<label for="etqcomp">Etiqueta de composição</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="tag" required>
+						<input type="text" id="tag">
 						<label for="tag">Tag</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="refil" required>
+						<input type="text" id="refil">
 						<label for="refil">Refil de pistola</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="elastico" required>
+						<input type="text" id="elastico">
 						<label for="elastico">Elástico 40mm e 20mm</label>
 					</div>
 				</div>
@@ -105,19 +106,19 @@
 			<div id="finalizacao" class="col s12">
 				<div class="center-inputs">
 					<div class="input-field">
-						<input type="text" id="saco" required>
+						<input type="text" id="saco">
 						<label for="saco">Saco plástico</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="fita" required>
+						<input type="text" id="fita">
 						<label for="fita">Fita durex</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="embalagem" required>
+						<input type="text" id="embalagem">
 						<label for="embalagem">Embalagem</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="deslocamento" required>
+						<input type="text" id="deslocamento">
 						<label for="deslocamento">Deslocamento</label>
 					</div>
 				</div>
@@ -125,27 +126,27 @@
 			<div id="valores" class="col s12">
 				<div class="center-inputs">
 					<div class="input-field">
-						<input type="text" id="custo" required>
+						<input type="text" id="custo">
 						<label for="custo">Custo do produto</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="precofinal" required>
-						<label for="precofinal">Preço final</label>
+						<input type="number" id="fatormult" onblur="calcularValorVarejoEAtacado()">
+						<label for="fatormult">Fator de multiplicação *</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="valorsite" required>
-						<label for="valorsite">Valor no site</label>
+						<input type="text" id="valorvarejo">
+						<label for="valorvarejo">Valor varejo</label>
 					</div>
 					<div class="input-field">
-						<input type="text" id="valorvenda" required>
-						<label for="valorvenda">Valor de venda</label>
+						<input type="text" id="valoratacado">
+						<label for="valoratacado">Valor atacado</label>
 					</div>
+					<button id="cadastrarBtn" class="btn waves-effect waves-light" type="submit">Salvar</button>
 				</div>
 			</div>
 		</div>
-		<button class="btn waves-effect waves-light" type="submit">Salvar</button>
 	</div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script th:src="/js/alterarproduto.js"></script>
+    <script src="/js/alterarproduto.js"></script>
 </body>
 </html>

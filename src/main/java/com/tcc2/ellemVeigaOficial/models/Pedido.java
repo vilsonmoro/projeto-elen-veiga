@@ -60,4 +60,12 @@ public class Pedido {
 	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codusu_ped")
 	private Usuario usuario;
+
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "codcli_ped")
+    private Cliente cliente;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipent_ped", length = 25)
+    private TipoEntrega tipo_entrega;
 }

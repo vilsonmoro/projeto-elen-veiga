@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendedor</title>
+    <title>Editar vendedor</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -25,9 +25,8 @@
             <li><a href="/buscarcliente" title="Cliente"><span class="material-icons">people</span></a></li> 
             <li><a href="/buscarproduto" title="Produto"><span class="material-icons">checkroom</span></a></li>
             <li><a href="/buscarpedido" title="Pedido"><span class="material-icons">list_alt</span></a></li>
-            <li><a href="/buscarvenda" title="Venda"><span class="material-icons">attach_money</span></a></li>
-            <li><a href="/buscarpagamento" title="Pagamento"><span class="material-icons">payment</span></a></li> 
-            <li><a href="/relatorio" title="Relatórios"><span class="material-icons">assignment</span></a></li> 
+            <li><a href="/buscarvenda" title="Venda"><span class="material-icons">attach_money</span></a></li> 
+            <li><a href="/relatorio" title="Relatório"><span class="material-icons">assignment</span></a></li> 
             <li><a href="/buscarvendedor" title="Vendedor" class="active"><span class="material-icons">support_agent</span></a></li> 
         </ul>
     </div>
@@ -35,7 +34,7 @@
         <h1>Editar Vendedor</h1>
         <div class="input-field">
             <input type="text" id="nome" required>
-            <label for="nome">Nome</label>
+            <label for="nome">Nome *</label>
         </div>
         <div class="input-field">
             <input type="text" id="sobrenome" required>
@@ -47,15 +46,15 @@
         </div>
         <div class="input-field">
             <input type="number" id="desconto" min="0" max="100" required>
-            <label for="desconto">Desconto (%)</label>
+            <label for="desconto">Desconto (%) *</label>
         </div>
         <div class="input-field">
 			<select id="status" required>
 				<option value="" disabled selected>Escolha seu status</option>
 				<option value="ativo">Ativo</option>
-				<option value="inativo">Inativo</option>
+				<option value="desativado">Desativado</option>
 			</select>
-			<label for="status">Status</label>
+			<label for="status">Status *</label>
 		</div>
         <div class="input-field">
 			<input type="text" id="observacoes">
