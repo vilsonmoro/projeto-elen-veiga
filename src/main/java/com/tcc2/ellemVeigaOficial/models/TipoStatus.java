@@ -12,7 +12,8 @@ public enum TipoStatus {
     DESATIVADO("Desativado"),
     APROVADO("Aprovado"),
     AGUARDANDO_APROVACAO("Aguardando Aprovação"),
-    REPROVADO("Reprovado");
+    REPROVADO("Reprovado"),
+    FINALIZADO("Finalizado");
 
     private final String descricao;
 

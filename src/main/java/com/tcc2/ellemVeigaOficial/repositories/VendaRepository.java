@@ -2,7 +2,6 @@ package com.tcc2.ellemVeigaOficial.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import com.tcc2.ellemVeigaOficial.models.FormaPagamento;
 import com.tcc2.ellemVeigaOficial.models.Venda;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +12,7 @@ import java.util.Date;
 @Repository
 public interface VendaRepository extends JpaRepository<Venda, Long>{
        List<Venda> findByDataBetween(Date dataInicio, Date dataFim);
+       boolean existsByPedido(com.tcc2.ellemVeigaOficial.models.Pedido pedido);
 
        @Query("SELECT v FROM Venda v WHERE " +
               "v.data BETWEEN :dataInicio AND :dataFim AND " +
@@ -22,16 +22,18 @@ public interface VendaRepository extends JpaRepository<Venda, Long>{
        @Param("dataFim") Date dataFim,
        @Param("formaPagamento") FormaPagamento formaPagamento);
 
-      
-       @Query("SELECT v FROM Venda v JOIN v.cliente c WHERE " +
+       @Query("SELECT v FROM Venda v LEFT JOIN v.cliente c WHERE " +
               "(:idVenda IS NULL OR v.id = :idVenda) AND " +
-              "(:nomeCliente IS NULL OR c.nome LIKE %:nomeCliente%) AND " +
+              "(:nomeCliente IS NULL OR (c IS NOT NULL AND LOWER(c.nome) LIKE LOWER(CONCAT('%', :nomeCliente, '%')))) AND " +
               "(:idPedido IS NULL OR v.pedido.id = :idPedido) AND " +
               "(:dataInicial IS NULL OR v.data >= :dataInicial) AND " +
               "(:dataFinal IS NULL OR v.data <= :dataFinal)")
-       List<Venda> buscarVendas(@Param("idVenda") Long idVenda,
-                                   @Param("nomeCliente") String nomeCliente,
-                                   @Param("idPedido") Long idPedido,
-                                   @Param("dataInicial") Date dataInicial,
-                                   @Param("dataFinal") Date dataFinal);
+       List<Venda> buscarVendas(
+              @Param("idVenda") Long idVenda,
+              @Param("nomeCliente") String nomeCliente,
+              @Param("idPedido") Long idPedido,
+              @Param("dataInicial") Date dataInicial,
+              @Param("dataFinal") Date dataFinal
+       );
+
 }

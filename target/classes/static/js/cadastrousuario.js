@@ -1,9 +1,10 @@
+import { BASE_URL } from './url_base'
 function confirmLogout(event) {
     event.preventDefault();
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear(); 
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }
 
@@ -26,31 +27,31 @@ document.querySelector('.btn').addEventListener('click', async function(e) {
     if (!confirmarSenha) camposFaltando.push('Confirmar Senha');
 
     if (camposFaltando.length > 0) {
-        alert(`Preencha os seguintes campos obrigatórios: ${camposFaltando.join(', ')}`);
+        M.toast({ html: `Preencha os seguintes campos obrigatórios: ${camposFaltando.join(', ')}`, classes: 'yellow' });
         return;
     }
 
     // Validações adicionais
     if (usuario.length < 3 || usuario.length > 25) {
-        alert('O usuário deve ter entre 3 e 25 caracteres.');
+        M.toast({ html: 'O usuário deve ter entre 3 e 25 caracteres.', classes: 'yellow' });
         return;
     }
     if (usuario.includes(' ')) {
-        alert('O usuário não pode conter espaços.');
+        M.toast({ html: 'O usuário não pode conter espaços.', classes: 'yellow' });
         return;
     }
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
-        alert('Por favor, insira um e-mail válido.');
+        M.toast({ html: 'Por favor, insira um e-mail válido.', classes: 'yellow' });
         return;
     }
     const senhaPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
     if (!senhaPattern.test(senha)) {
-        alert('A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um caractere especial e ter no mínimo 8 caracteres.');
+        M.toast({ html: 'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um caractere especial e ter no mínimo 8 caracteres.', classes: 'yellow' });
         return;
     }
     if (senha !== confirmarSenha) {
-        alert('As senhas não coincidem.');
+        M.toast({ html: 'As senhas não coincidem.', classes: 'yellow' });
         return;
     }
 
@@ -65,7 +66,7 @@ document.querySelector('.btn').addEventListener('click', async function(e) {
     try {
         const token = localStorage.getItem('token');
 
-        const response = await fetch('/usuario/cadastro', {
+        const response = await fetch('${BASE_URL}/usuario/cadastro', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

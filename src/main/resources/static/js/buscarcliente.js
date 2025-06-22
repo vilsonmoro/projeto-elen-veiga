@@ -1,3 +1,5 @@
+import { BASE_URL } from './url_base'
+
 let clientesPaginados = [];
 let currentPage = 1;
 const itemsPerPage = 10;
@@ -7,7 +9,7 @@ function confirmLogout(event) {
 	const confirmed = confirm("Você deseja realmente sair da aplicação?");
 	if (confirmed) {
 		localStorage.clear();
-		window.location.href = "/login";
+		window.location.href = "./login.html";
 	}
 }
 
@@ -21,7 +23,7 @@ async function searchCliente() {
 	if (nome) params.append('nome', nome); 
 
 	try {
-		const response = await fetch(`/cliente/buscar?${params.toString()}`, {
+		const response = await fetch(`${BASE_URL}/cliente/buscar?${params.toString()}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${token}`,
@@ -118,7 +120,7 @@ async function editcliente(codigo) {
 	const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`/cliente/${codigo}`, {
+        const response = await fetch(`${BASE_URL}/cliente/${codigo}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -127,7 +129,7 @@ async function editcliente(codigo) {
         });
 
         if (!response.ok) {
-            alert('Erro ao buscar cliente: ' + response.statusText);
+            M.toast({ html: `Erro ao buscar cliente: ${response.statusText}`, classes: 'red' });
             return;
         }
 
@@ -135,11 +137,11 @@ async function editcliente(codigo) {
 
         localStorage.setItem('clienteParaEditar', JSON.stringify(cliente));
 
-        window.location.href = '/alterarcliente';
+        window.location.href = './alterarcliente.html';
 
     } catch (error) {
         console.error('Erro ao buscar cliente:', error);
-        alert('Erro inesperado ao buscar os dados do cliente.');
+        M.toast({ html: `Erro inesperado ao buscar os dados do cliente.`, classes: 'red' });
     }
 }
 
@@ -150,7 +152,7 @@ async function confirmDelete(codigo) {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`/cliente/${codigo}`, {
+        const response = await fetch(`${BASE_URL}/cliente/${codigo}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -159,15 +161,16 @@ async function confirmDelete(codigo) {
         });
 
         if (response.ok) {
-            alert("Cliente excluído com sucesso!");
+            M.toast({ html: 'Cliente excluído com sucesso!', classes: 'green' });
             searchCliente();
         } else {
             const errorData = await response.json();
-            alert("Erro ao excluir o cliente: " + (errorData.message || response.statusText));
+            M.toast({ html: `Erro ao excluir o cliente: ${response.statusText}`, classes: 'red' });
+            console.log("Erro ao excluir o cliente: " + (errorData.message || response.statusText));
         }
     } catch (error) {
         console.error("Erro ao excluir o cliente:", error);
-        alert("Erro inesperado ao tentar excluir o cliente.");
+        M.toast({ html: `Erro inesperado ao tentar excluir o cliente: ${error.message}`, classes: 'red' });
     }
 }
 

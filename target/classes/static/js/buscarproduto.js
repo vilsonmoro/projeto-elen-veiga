@@ -1,3 +1,4 @@
+import { BASE_URL } from './url_base'
 let produtosPaginados = [];
 let currentPage = 1;
 const itemsPerPage = 10;
@@ -7,7 +8,7 @@ function confirmLogout(event) {
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }
 
@@ -21,7 +22,7 @@ async function searchProduto() {
     if (nome) params.append('nome', nome);
 
     try {
-    const response = await fetch(`/produto/buscar?${params.toString()}`, {
+    const response = await fetch(`${BASE_URL}/produto/buscar?${params.toString()}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -30,14 +31,15 @@ async function searchProduto() {
     });
 
     if (!response.ok) {
-        alert('Erro ao buscar produtos: ' + response.statusText);
+        M.toast({ html: `Erro de conexão (endereço): ${response.statusText}`, classes: 'red' });
+        //alert('Erro ao buscar produtos: ' + response.statusText);
         return;
     }
 
     const produtos = await response.json();
     populateResultsTable(produtos);
     } catch (error) {
-        console.error('Erro:', error);
+        M.toast({ html: `Erro ao buscar o produto: ${error.message}`, classes: 'red' });
     }
 }
 
@@ -107,7 +109,7 @@ async function editproduto(codigo) {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`/produto/${codigo}`, {
+        const response = await fetch(`${BASE_URL}/produto/${codigo}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -116,18 +118,18 @@ async function editproduto(codigo) {
         });
 
         if (!response.ok) {
-            alert('Erro ao buscar produto: ' + response.statusText);
+            M.toast({ html: `Erro ao buscar produto: ${response.statusText}`, classes: 'red' });
             return;
         }
 
         const produto = await response.json();
 
         localStorage.setItem('produtoParaEditar', JSON.stringify(produto));
-        window.location.href = '/alterarproduto';
+        window.location.href = './alterarproduto.html';
 
     } catch (error) {
+        M.toast({ html: `Erro inesperado ao buscar os dados do produto.`, classes: 'red' });
         console.error('Erro ao buscar produto:', error);
-        alert('Erro inesperado ao buscar os dados do produto.');
     }
 }
 
@@ -138,7 +140,7 @@ async function confirmDelete(id) {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`/produto/${id}`, {
+        const response = await fetch(`${BASE_URL}/produto/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -147,14 +149,15 @@ async function confirmDelete(id) {
         });
 
         if (response.ok) {
-            alert("Produto excluído com sucesso!");
+            M.toast({ html: 'Produto excluído com sucesso!', classes: 'green' });
             searchProduto(); // Recarrega a lista
         } else {
             const errorData = await response.json();
-            alert("Erro ao excluir o produto: " + (errorData.message || response.statusText));
+            M.toast({ html: `Erro ao excluir o produto: ${errorData.message}`, classes: 'red' });
+            console.error("Erro ao excluir o produto:", (errorData.message || response.statusText));
         }
     } catch (error) {
+        M.toast({ html: `Erro inesperado ao tentar excluir o produto.`, classes: 'red' });
         console.error("Erro ao excluir o produto:", error);
-        alert("Erro inesperado ao tentar excluir o produto.");
     }
 }

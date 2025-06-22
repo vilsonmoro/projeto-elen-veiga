@@ -37,6 +37,12 @@ public class Venda {
     private int parcela;
 	@Column(name = "observacao_ven", length = 100)
     private String observacao;
+	@Column(name = "frete_ven", length = 100)
+    private Float frete;
+	@Column(name = "valent_ven", nullable = false, length = 100)
+    private Float valorEntrada;
+	@Column(name = "valrest_ven", nullable = false, length = 100)
+    private Float valorRestante;
 
 	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "codusu_ven")

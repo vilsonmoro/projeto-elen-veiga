@@ -26,7 +26,7 @@ public class PedidoProduto {
     private Long id;
 	
 	@Column(name = "qtd_pp", nullable = false, length = 100)
-    private int quatidade;
+    private int quantidade;
 
 	@Column(name = "observacao_pp", length = 100)
     private String observacao;

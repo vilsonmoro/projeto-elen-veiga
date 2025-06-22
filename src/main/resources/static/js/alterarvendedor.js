@@ -1,3 +1,5 @@
+import { BASE_URL } from './url_base'
+
 document.addEventListener('DOMContentLoaded', function() {
 	const elems = document.querySelectorAll('select');
 	const instances = M.FormSelect.init(elems);
@@ -8,7 +10,7 @@ function confirmLogout(event) {
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear(); 
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }
 
@@ -16,13 +18,14 @@ window.onload = function() {
     const vendedorData = localStorage.getItem('vendedorParaEditar');
 
     if (!vendedorData) {
-        alert('Nenhum vendedor selecionado para edição.');
-        window.location.href = '/buscarvendedor';
+        M.toast({ html: 'Nenhum vendedor selecionado para edição.', classes: 'yellow' });
+        window.location.href = './buscarvendedor.html';
         return;
     }
 
     const vendedor = JSON.parse(vendedorData);
 
+    document.getElementById('codigo').value = vendedor.id;
     document.getElementById('nome').value = vendedor.nome;
     document.getElementById('sobrenome').value = vendedor.sobrenome;
     document.getElementById('email').value = vendedor.email;
@@ -54,25 +57,34 @@ document.querySelector('.btn').addEventListener('click', async function(e) {
     const observacao = document.getElementById('observacoes').value.trim();
 
     // Validações
+    const camposFaltando = [];
+    if (!nome) camposFaltando.push('Nome');
+    if (!desconto) camposFaltando.push('Desconto');
+    if (!status) camposFaltando.push('Status');
+
+    if (camposFaltando.length > 0) {
+        M.toast({ html: `Preencha os seguintes campos obrigatórios: ${camposFaltando.join(', ')}`, classes: 'yellow' });
+        return;
+    }
     if (desconto < 0 || desconto > 100) {
-        alert('O desconto deve ser um valor entre 0 e 100.');
+        M.toast({ html: 'O desconto deve ser um valor entre 0 e 100.', classes: 'yellow' });
         return;
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
-        alert('Por favor, insira um e-mail válido.');
+        M.toast({ html: 'Por favor, insira um e-mail válido.', classes: 'yellow' });
         return;
     }
 
     if (observacao.length > 250) {
-        alert('A observação deve ter no máximo 250 caracteres.');
+        M.toast({ html: 'A observação deve ter no máximo 250 caracteres.', classes: 'yellow' });
         return;
     }
 
     const vendedorData = localStorage.getItem('vendedorParaEditar');
     if (!vendedorData) {
-        alert('Vendedor não encontrado.');
+        M.toast({ html: `Vendedor não encontrado.`, classes: 'red' });
         return;
     }
 
@@ -81,7 +93,7 @@ document.querySelector('.btn').addEventListener('click', async function(e) {
 
     const usuarioId = localStorage.getItem('userId');
     if (!usuarioId) {
-        alert('ID do usuário não encontrado. Faça login novamente.');
+        M.toast({ html: `ID do usuário não encontrado. Faça login novamente.`, classes: 'red' });
         return;
     }
 
@@ -101,7 +113,7 @@ document.querySelector('.btn').addEventListener('click', async function(e) {
     try {
         const token = localStorage.getItem('token');
 
-        const response = await fetch(`/vendedor/${id}`, {
+        const response = await fetch(`${BASE_URL}/vendedor/${id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -112,7 +124,7 @@ document.querySelector('.btn').addEventListener('click', async function(e) {
 
         if (response.ok) {
             M.toast({ html: 'Vendedor atualizado com sucesso!', classes: 'green' });
-            window.location.href = '/buscarvendedor';
+            window.location.href = './buscarvendedor.html';
         } else {
             const errorData = await response.json();
             const errorMsg = errorData.message || errorData.error || 'Erro desconhecido.';

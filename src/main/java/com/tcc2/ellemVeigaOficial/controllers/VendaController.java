@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,32 +21,36 @@ import com.tcc2.ellemVeigaOficial.models.FormaPagamento;
 import com.tcc2.ellemVeigaOficial.models.Venda;
 import com.tcc2.ellemVeigaOficial.services.FluxoCaixaService;
 import com.tcc2.ellemVeigaOficial.services.VendaService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.Date;
 
 @RestController
-@RequestMapping("/venda")
+@CrossOrigin
+@Tag(name = "Vendas", description = "Operações relacionadas a vendas")
 public class VendaController {
     @Autowired
     private VendaService service;
     @Autowired
     private FluxoCaixaService fluxoservice;
 
-    @PostMapping
+    @PostMapping("/venda")
     public ResponseEntity<Venda> addVenda(@RequestBody Venda venda){
        return ResponseEntity.status(HttpStatus.CREATED).body(service.addVenda(venda));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/venda/{id}")
     public ResponseEntity<Venda> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
-    @GetMapping
+    @GetMapping("/venda")
     public ResponseEntity<List<Venda>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
     
-    @PutMapping("/{id}")
+    @PutMapping("/venda/{id}")
     public ResponseEntity<Venda> updateVenda(@PathVariable Long id, @RequestBody Venda venda) {
         try {
             Venda updateVenda = service.update(id, venda);
@@ -55,13 +60,13 @@ public class VendaController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/venda/{id}")
     public ResponseEntity<Void> deleteVenda(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/buscar")
+    @GetMapping("/venda/buscar")
     public ResponseEntity<List<Venda>> buscarVendas(
             @RequestParam(required = false) Long idVenda,
             @RequestParam(required = false) String nomeCliente,
@@ -73,7 +78,7 @@ public class VendaController {
         return ResponseEntity.ok(vendas);
     }
 
-    @GetMapping("/fluxo-caixa")
+    @GetMapping("/venda/fluxo-caixa")
     public ResponseEntity<List<FluxoCaixa>> relatorioFluxoCaixa(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dataInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dataFim,

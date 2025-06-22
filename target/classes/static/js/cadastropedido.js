@@ -1,484 +1,487 @@
-function confirmLogout(event) {
-    event.preventDefault();
-    const confirmed = confirm("Você deseja realmente sair da aplicação?");
-    if (confirmed) {
-        localStorage.clear();
-        window.location.href = "/login";
-    }
+import { BASE_URL } from './url_base'
+let produtoIdSelecionado = null;
+let popup, produtoForm, tabelaRegistros, tabsInstance;
+
+document.addEventListener('DOMContentLoaded', () => {
+  inicializarElementos();
+  inicializarComponentes();
+  registrarEventos();
+  configurarAutocompletes();
+  atualizarValorTotalPagamento();
+});
+
+function inicializarElementos() {
+  popup = document.getElementById('popup');
+  produtoForm = document.getElementById('produtoForm');
+  tabelaRegistros = document.querySelector('#tabelaRegistros');
+  tabsInstance = M.Tabs.init(document.querySelectorAll('.tabs'))[0];
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const addBtn = document.getElementById('addRegistro');
-    const popup = document.getElementById('popup');
-    const closeBtn = document.querySelector('.close-btn');
-    const selectElems = document.querySelectorAll('select');
-    const tabElems = document.querySelectorAll('.tabs');
-    const produtoForm = document.getElementById('produtoForm');
-    const tabelaRegistros = document.querySelector('#tabelaRegistros tbody');
-    const tabsInstance = M.Tabs.init(tabElems)[0];
+function inicializarComponentes() {
+  M.FormSelect.init(document.querySelectorAll('select'));
 
-    let produtoIdSelecionado = null;
+  const dataInput = document.getElementById('data');
+  if (dataInput) {
+    const agora = new Date();
 
-    M.FormSelect.init(selectElems);
+  // Fuso de Brasília: UTC-3
+  const offsetBrasiliaMs = -3 * 60 * 60 * 1000;
+  const dataBrasilia = new Date(agora.getTime() + agora.getTimezoneOffset() * 60000 + offsetBrasiliaMs);
 
-    addBtn.addEventListener('click', () => popup.style.display = 'block');
-    closeBtn.addEventListener('click', () => popup.style.display = 'none');
-    window.addEventListener('click', (event) => {
-        if (event.target === popup) popup.style.display = 'none';
+  const yyyy = dataBrasilia.getFullYear();
+  const mm = String(dataBrasilia.getMonth() + 1).padStart(2, '0');
+  const dd = String(dataBrasilia.getDate()).padStart(2, '0');
+
+  dataInput.value = `${yyyy}-${mm}-${dd}`;
+  }
+}
+
+function registrarEventos() {
+  document.getElementById('addRegistro').addEventListener('click', () => mostrarPopup(true));
+  document.querySelector('.close-btn').addEventListener('click', () => mostrarPopup(false));
+  window.addEventListener('click', e => {
+    if (e.target === popup) mostrarPopup(false);
+  });
+
+  document.getElementById('frete').addEventListener('input', atualizarValorTotalPagamento);
+  document.getElementById('valorentrada').addEventListener('input', atualizarValorTotalPagamento);
+
+  produtoForm.addEventListener('submit', e => {
+    e.preventDefault();
+    salvarProduto();
+  });
+
+  tabelaRegistros.addEventListener('click', manipularTabela);
+  document.getElementById('cadastrarBtn').addEventListener('click', cadastrarPedido);
+}
+
+function configurarAutocompletes() {
+  setupClienteAutocomplete('cliente', '${BASE_URL}/cliente/buscar', 'cliente-suggestions', 'nome');
+  setupProdutoAutocomplete('nome', '${BASE_URL}/produto/buscar', 'nome-suggestions', 'nome');
+}
+
+function mostrarPopup(ativo) {
+  popup.style.display = ativo ? 'block' : 'none';
+}
+
+async function cadastrarPedido() {
+  const clienteId = localStorage.getItem('pedido_cliente_id');
+  const usuarioId = localStorage.getItem('userId');
+  if (!usuarioId) {
+    M.toast({ html: 'Usuário não autenticado.', classes: 'red' });
+    return;
+  }
+
+  const pedido = coletarDadosPedido(clienteId, usuarioId);
+
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch('${BASE_URL}/pedido', {
+      method: 'POST',
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify(pedido)
     });
 
-    function salvarProduto() {
-        const nome = document.getElementById('nome').value;
-        const quantidade = document.getElementById('quantidade').value;
-        const tamanho = document.getElementById('tamanho').value;
-        const valor = document.getElementById('valor').value;
-        const valortotal = document.getElementById('valortotal').value;
-        const observacao = document.getElementById('observacao').value;
-
-        if (!nome || !quantidade || !valor || !valortotal) {
-            alert("Preencha os campos obrigatórios.");
-            return;
-        }
-
-        if (produtoIdSelecionado) {
-            let ids = JSON.parse(localStorage.getItem("pedido_produto_ids")) || [];
-            if (!ids.includes(produtoIdSelecionado)) {
-                ids.push(produtoIdSelecionado);
-                localStorage.setItem("pedido_produto_ids", JSON.stringify(ids));
-            }
-        }
-
-        const novaLinha = document.createElement('tr');
-        novaLinha.dataset.id = produtoIdSelecionado;
-        novaLinha.innerHTML = `
-            <td>${nome}</td>
-            <td>${quantidade}</td>
-            <td>${tamanho}</td>
-            <td>${parseFloat(valor).toFixed(2)}</td>
-            <td>${parseFloat(valortotal).toFixed(2)}</td>
-            <td>${observacao}</td>
-            <td>
-                <button class="action-button">
-                    <span class="material-icons">edit</span>
-                </button>
-                <button class="action-button">
-                    <span class="material-icons">delete</span>
-                </button>
-            </td>
-        `;
-        tabelaRegistros.appendChild(novaLinha);
-
-        popup.style.display = 'none';
-        produtoForm.reset();
-        M.updateTextFields();
-        produtoIdSelecionado = null;
-        tabsInstance.select('itens');
-        atualizarValorTotalPagamento();
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText);
     }
 
-    produtoForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        salvarProduto();
-    });
-
-    const botaoSalvar = document.getElementById("salvarpopup");
-    if (botaoSalvar) {
-        botaoSalvar.addEventListener("click", salvarProduto);
+    const result = await response.json();
+    if (result.id) {
+      localStorage.setItem('pedido_id', result.id);
+      await enviarProdutosDoPedido();
     }
 
-    tabelaRegistros.addEventListener('click', function (e) {
-        const icon = e.target.closest('.material-icons');
-        if (!icon) return;
+    M.toast({ html: 'Pedido cadastrado com sucesso!', classes: 'green' });
+    setTimeout(() => {
+      limparLocalStorageExcetoTokenEUsuario();
+      window.location.href = './buscarpedido.html';
+    }, 8000);
 
-        const action = icon.textContent.trim();
-        const tr = icon.closest('tr');
-        const produtoId = tr.dataset.id;
-        const tds = tr.querySelectorAll('td');
+  } catch (error) {
+    M.toast({ html: `Erro ao cadastrar pedido: ${error.message}`, classes: 'red' });
+    console.log(error);
+    setTimeout(() => {
+      limparLocalStorageExcetoTokenEUsuario();
+      window.location.href = './buscarpedido.html';
+    }, 8000);
+  }
+}
 
-        if (action === 'edit') {
-            document.getElementById('nome').value = tds[0].textContent;
-            document.getElementById('quantidade').value = tds[1].textContent;
-            document.getElementById('tamanho').value = tds[2].textContent;
-            document.getElementById('valor').value = tds[3].textContent;
-            document.getElementById('valortotal').value = tds[4].textContent;
-            document.getElementById('observacao').value = tds[5].textContent;
+function coletarDadosPedido(clienteId, usuarioId) {
+  const tipoEntrega = document.getElementById('tipoentrega').value;
+  const formaPagamento = document.getElementById('formapagamento').value;
 
-            produtoIdSelecionado = produtoId;
+  if (!tipoEntrega) {
+    M.toast({ html: 'Selecione um tipo de entrega.', classes: 'red' });
+    throw new Error('Tipo de entrega não selecionado');
+  }
 
-            // Remove a linha antiga antes de reabrir o popup
-            tr.remove();
-            atualizarValorTotalPagamento();
+  if (!formaPagamento) {
+    M.toast({ html: 'Selecione uma forma de pagamento.', classes: 'red' });
+    throw new Error('Forma de pagamento não selecionada');
+  }
 
-            M.updateTextFields();
-            popup.style.display = 'block';
-        }
+  const dataBase = document.getElementById('data').value;
+  const dataBaseEnt = document.getElementById('data').value;
+  const data = `${dataBase}T00:00:00-03:00`;
+  const data_entrega = `${dataBaseEnt}T00:00:00-03:00`;
 
-        if (action === 'delete') {
-            tr.remove();
-            let ids = JSON.parse(localStorage.getItem("pedido_produto_ids")) || [];
-            ids = ids.filter(id => id !== produtoId);
-            localStorage.setItem("pedido_produto_ids", JSON.stringify(ids));
-        }
-    });
+  return {
+    data,
+    desconto_revendedor: parseFloat(document.getElementById('desconto').value) || 0,
+    frete: parseFloat(document.getElementById('frete').value) || 0,
+    valor_total: parseFloat(document.getElementById('valortotal').value) || 0,
+    valor_entrada: parseFloat(document.getElementById('valorentrada').value) || 0,
+    valor_restante: parseFloat(document.getElementById('valorrestante').value) || 0,
+    qtd_parcela: parseInt(document.getElementById('parcelas').value) || 0,
+    data_entrega,
+    status_pedido: document.getElementById('status').value.toUpperCase(),
+    forma_pagamento: formaPagamento.toUpperCase(),
+    cliente: clienteId ? { id: parseInt(clienteId) } : null,
+    usuario: { id: parseInt(usuarioId) },
+    tipo_entrega: tipoEntrega.toUpperCase()
+  };
+}
 
-    setupClienteAutocomplete("cliente", "../cliente/buscar", "cliente-suggestions", "nome");
-    setupProdutoAutocomplete("nome", "../produto/buscar", "nome-suggestions", "nome");
+function salvarProduto() {
+  const nome = document.getElementById('nome').value.trim();
+  const quantidade = parseFloat(document.getElementById('quantidade').value);
+  const tamanho = document.getElementById('tamanho').value.trim();
+  const valor = parseFloat(document.getElementById('valor').value);
+  const desconto = parseFloat(document.getElementById('desconto').value) || 0;
+  const observacao = document.getElementById('observacao').value.trim();
 
-    function setupProdutoAutocomplete(inputId, url, suggestionId, displayKey) {
-        const input = document.getElementById(inputId);
-        const suggestionBox = document.getElementById(suggestionId);
-        const valorInput = document.getElementById("valor");
-        const quantidadeInput = document.getElementById("quantidade");
-        const valorTotalInput = document.getElementById("valortotal");
-    
-        input.addEventListener("focus", () => suggestionBox.style.display = 'block');
-        input.addEventListener("blur", () => setTimeout(() => suggestionBox.style.display = 'none', 200));
-    
-        input.addEventListener("input", async () => {
-            const query = input.value.trim();
-            if (query.length === 0) {
-                suggestionBox.innerHTML = "";
-                suggestionBox.style.display = 'none';
-                return;
-            }
-    
-            try {
-                const token = localStorage.getItem("token"); // ou a origem correta do seu token
-                const response = await fetch(`${url}?nome=${encodeURIComponent(query)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-    
-                if (!response.ok) {
-                    throw new Error('Erro ao buscar produtos');
-                }
-    
-                let data = await response.json();
-                if (!Array.isArray(data)) data = [data];
-    
-                suggestionBox.innerHTML = data.slice(0, 5).map(item =>
-                    `<div data-id="${item.id}" data-valor="${item.valorvarejo}">${item[displayKey]}</div>`
-                ).join("");
-                suggestionBox.style.display = 'block';
-    
-                suggestionBox.querySelectorAll("div").forEach(div => {
-                    div.addEventListener("click", () => {
-                        input.value = div.textContent;
-                        const valor = parseFloat(div.dataset.valor);
-                        valorInput.value = valor.toFixed(2);
-                        M.updateTextFields();
-                        produtoIdSelecionado = div.dataset.id;
-    
-                        const quantidade = parseFloat(quantidadeInput.value);
-                        if (!isNaN(quantidade)) {
-                            valorTotalInput.value = (quantidade * valor).toFixed(2);
-                            M.updateTextFields();
-                        }
-    
-                        suggestionBox.innerHTML = "";
-                        suggestionBox.style.display = 'none';
-                    });
-                });
-            } catch (error) {
-                console.error("Erro ao buscar produtos:", error);
-                M.toast({ html: `Erro ao buscar produtos: ${error.message}`, classes: 'red' });
-            }
-        });
-    
-        quantidadeInput.addEventListener("input", () => {
-            const valor = parseFloat(valorInput.value);
-            const quantidade = parseFloat(quantidadeInput.value);
-            if (!isNaN(valor) && !isNaN(quantidade)) {
-                valorTotalInput.value = (quantidade * valor).toFixed(2);
-                M.updateTextFields();
-            }
-        });
+  if (!nome || isNaN(quantidade) || isNaN(valor)) {
+    M.toast({ html: 'Preencha os campos obrigatórios.', classes: 'yellow' });
+    return;
+  }
+
+  const valortotal = (quantidade * valor) - desconto;
+
+  // Remove linha antiga e ID antigo se estiver editando
+  if (produtoIdSelecionado) {
+    const linhaExistente = tabelaRegistros.querySelector(`tr[data-id='${produtoIdSelecionado}']`);
+    if (linhaExistente) linhaExistente.remove();
+    removerProdutoDoLocalStorage(produtoIdSelecionado);
+  }
+
+  const novoId = produtoIdSelecionado || `temp-${Date.now()}`;
+
+  const novaLinha = criarLinhaProduto({
+    id: novoId,
+    nome,
+    quantidade,
+    tamanho,
+    valor,
+    desconto,
+    valortotal,
+    observacao
+  });
+
+  const tbody = tabelaRegistros.querySelector('tbody') || tabelaRegistros;
+  tbody.appendChild(novaLinha);
+
+  adicionarProdutoAoLocalStorage(novoId); // <-- adiciona ID à lista
+
+  produtoForm.reset();
+  produtoIdSelecionado = null;
+  M.updateTextFields();
+  mostrarPopup(false);
+  atualizarValorTotalPagamento();
+}
+
+function adicionarProdutoAoLocalStorage(produtoId) {
+  let ids = JSON.parse(localStorage.getItem('pedido_produto_ids')) || [];
+  if (!ids.includes(produtoId)) {
+    ids.push(produtoId);
+    localStorage.setItem('pedido_produto_ids', JSON.stringify(ids));
+  }
+}
+
+function criarLinhaProduto({ id, nome, quantidade, tamanho, valor, desconto, valortotal, observacao }) {
+  const tr = document.createElement('tr');
+  tr.dataset.id = id;
+  tr.innerHTML = `
+    <td>${nome}</td>
+    <td>${quantidade}</td>
+    <td>${tamanho}</td>
+    <td>${valor.toFixed(2)}</td>
+    <td>${desconto.toFixed(2)}</td>
+    <td>${valortotal.toFixed(2)}</td>
+    <td>${observacao}</td>
+    <td>
+      <button class="action-button"><span class="material-icons">edit</span></button>
+      <button class="action-button"><span class="material-icons">delete</span></button>
+    </td>
+  `;
+  return tr;
+}
+
+function atualizarValorTotalPagamento() {
+  const linhas = tabelaRegistros.querySelectorAll('tr');
+  let somaTotal = 0;
+
+  linhas.forEach(linha => {
+    const valorCelula = linha.querySelectorAll('td')[5];
+    if (valorCelula) {
+      const valor = parseFloat(valorCelula.textContent);
+      if (!isNaN(valor)) somaTotal += valor;
     }
-    
+  });
 
-    function setupClienteAutocomplete(inputId, url, suggestionId, displayKey) {
-        const input = document.getElementById(inputId);
-        const suggestionBox = document.getElementById(suggestionId);
-    
-        input.addEventListener("focus", () => suggestionBox.style.display = 'block');
-        input.addEventListener("blur", () => setTimeout(() => suggestionBox.style.display = 'none', 200));
-    
-        input.addEventListener("input", async () => {
-            const query = input.value.trim();
-            localStorage.removeItem("venda_cliente_id");
-    
-            if (query.length === 0) {
-                suggestionBox.innerHTML = "";
-                suggestionBox.style.display = 'none';
-                return;
-            }
-    
-            try {
-                const token = localStorage.getItem("token"); // Ajuste conforme a origem real do token
-                const response = await fetch(`${url}?nome=${encodeURIComponent(query)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-    
-                if (!response.ok) {
-                    throw new Error('Erro ao buscar clientes');
-                }
-    
-                let data = await response.json();
-                if (!Array.isArray(data)) data = [data];
-    
-                suggestionBox.innerHTML = data.slice(0, 5).map(item =>
-                    `<div data-id="${item.id}">${item[displayKey]}</div>`
-                ).join("");
-                suggestionBox.style.display = 'block';
-    
-                suggestionBox.querySelectorAll("div").forEach(div => {
-                    div.addEventListener("click", () => {
-                        input.value = div.textContent;
-                        localStorage.setItem("venda_cliente_id", div.dataset.id);
-                        suggestionBox.innerHTML = "";
-                        suggestionBox.style.display = 'none';
-                    });
-                });
-            } catch (error) {
-                console.error("Erro ao buscar dados:", error);
-                M.toast({ html: `Erro ao buscar clientes: ${error.message}`, classes: 'red' });
-            }
-        });
+  const frete = parseFloat(document.getElementById('frete').value) || 0;
+  const valorTotalComFrete = somaTotal + frete;
+
+  const campoValorTotalPagamento = document.getElementById('valortotal');
+  campoValorTotalPagamento.value = valorTotalComFrete.toFixed(2);
+
+  const campoValorEntrada = document.getElementById('valorentrada');
+  const campoValorRestante = document.getElementById('valorrestante');
+
+  if (campoValorEntrada && campoValorRestante) {
+    const valorEntrada = parseFloat(campoValorEntrada.value) || 0;
+    campoValorRestante.value = (valorTotalComFrete - valorEntrada).toFixed(2);
+  }
+  calcularDescontoRevendedor();
+  M.updateTextFields();
+}
+
+function calcularDescontoRevendedor() {
+  const valorTotal = parseFloat(document.getElementById('valortotal').value) || 0;
+  const frete = parseFloat(document.getElementById('frete').value) || 0;
+  const campoDescontoRevendedor = document.getElementById('descrevend');
+
+  const baseCalculo = valorTotal - frete;
+  const desconto = baseCalculo * 0.10;
+
+  campoDescontoRevendedor.value = desconto.toFixed(2);
+
+  M.updateTextFields();
+}
+
+function manipularTabela(event) {
+  const icon = event.target.closest('.material-icons');
+  if (!icon) return;
+
+  const action = icon.textContent.trim();
+  const tr = icon.closest('tr');
+  const produtoId = tr.dataset.id;
+  const tds = tr.querySelectorAll('td');
+
+  if (action === 'edit') {
+    preencherFormularioComProduto(tds);
+    produtoIdSelecionado = produtoId;
+    M.updateTextFields();
+    mostrarPopup(true);
+  }
+
+  if (action === 'delete') {
+    if (confirm('Tem certeza que deseja excluir este item da tabela?')) {
+      tr.remove();
+      removerProdutoDoLocalStorage(produtoId);
+      atualizarValorTotalPagamento();
+      M.toast({ html: 'Item excluído com sucesso!', classes: 'green' });
     }
-    
-    function atualizarValorTotalPagamento() {
-        const linhas = tabelaRegistros.querySelectorAll('tr');
-        let somaTotal = 0;
+  }
+}
 
-        linhas.forEach(linha => {
-            const valorCelula = linha.querySelectorAll('td')[4]; // 5ª coluna = "Valor total"
-            if (valorCelula) {
-                const valor = parseFloat(valorCelula.textContent);
-                if (!isNaN(valor)) somaTotal += valor;
-            }
-        });
+/* Preenche o formulário com os dados da linha da tabela */
+function preencherFormularioComProduto(tds) {
+  document.getElementById('nome').value = tds[0].textContent;
+  document.getElementById('quantidade').value = tds[1].textContent;
+  document.getElementById('tamanho').value = tds[2].textContent;
+  document.getElementById('valor').value = tds[3].textContent;
+  document.getElementById('desconto').value = tds[4].textContent;
+  document.getElementById('valortotal').value = tds[5].textContent;
+  document.getElementById('observacao').value = tds[6].textContent;
+}
 
-        const campoValorTotalPagamento = document.getElementById('valortot'); // Alterado para 'valortot'
-        if (!campoValorTotalPagamento) {
-            console.warn('Campo valortot não encontrado!');
-            return;
-        }
+function removerProdutoDoLocalStorage(produtoId) {
+  let ids = JSON.parse(localStorage.getItem('pedido_produto_ids')) || [];
+  ids = ids.filter(id => id !== produtoId);
+  localStorage.setItem('pedido_produto_ids', JSON.stringify(ids));
+}
 
-        campoValorTotalPagamento.value = somaTotal.toFixed(2);
+function setupProdutoAutocomplete(inputId, url, suggestionId, displayKey) {
+  const input = document.getElementById(inputId);
+  const suggestionBox = document.getElementById(suggestionId);
+  const valorInput = document.getElementById('valor');
+  const quantidadeInput = document.getElementById('quantidade');
+  const valorTotalInput = document.getElementById('valortotal');
 
-        // Atualizando o campo "Desconto" para 10% do valor total
-        const campoDesconto = document.getElementById('desconto');
-        if (campoDesconto) {
-            const desconto = somaTotal * 0.10; // 10% do valor total
-            campoDesconto.value = desconto.toFixed(2);
-        }
+  input.addEventListener('focus', () => suggestionBox.style.display = 'block');
+  input.addEventListener('blur', () => setTimeout(() => suggestionBox.style.display = 'none', 200));
 
-        // Atualizando o campo "Valor Restante"
-        const campoValorEntrada = document.getElementById('valorentrada');
-        if (campoValorEntrada) {
-            campoValorEntrada.addEventListener('input', () => {
-                const campoValorTotal = document.getElementById('valortot');
-                const campoValorRestante = document.getElementById('valorrestante');
-
-                const valorTotal = parseFloat(campoValorTotal?.value) || 0;
-                const valorEntrada = parseFloat(campoValorEntrada.value);
-
-                if (!isNaN(valorEntrada) && campoValorRestante) {
-                    const valorRestante = valorTotal - valorEntrada;
-                    campoValorRestante.value = valorRestante.toFixed(2);
-                    M.updateTextFields(); // Se estiver usando Materialize
-                }
-            });
-        }
-
-
-        M.updateTextFields(); // Atualiza visualmente se estiver usando Materialize
+  input.addEventListener('input', async () => {
+    const query = input.value.trim();
+    if (!query) {
+      limparSugestoes(suggestionBox);
+      return;
     }
-
-    document.getElementById("exportarPDF").addEventListener("click", async () => {
-        const tabela = document.querySelector("#tabelaRegistros");
-    
-        if (!tabela) {
-            alert("Tabela não encontrada.");
-            return;
-        }
-    
-        const clone = tabela.cloneNode(true);
-        clone.style.width = '100%';
-        document.body.appendChild(clone); // necessário para capturar com html2canvas
-    
-        await html2canvas(clone).then(canvas => {
-            const imgData = canvas.toDataURL("image/png");
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const pdfWidth = doc.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-    
-            doc.addImage(imgData, "PNG", 10, 10, pdfWidth - 20, pdfHeight);
-    
-            let y = pdfHeight + 20;
-    
-            const valortotal = parseFloat(document.getElementById('valortot').value) || 0;
-            const frete = parseFloat(document.getElementById('frete').value) || 0;
-            const desconto = parseFloat(document.getElementById('desconto').value) || 0;
-            const valorentrada = parseFloat(document.getElementById('valorentrada').value) || 0;
-            const valorrestante = parseFloat(document.getElementById('valorrestante').value) || 0;
-            const parcelas = parseInt(document.getElementById('parcelas').value) || 0;
-            const valortotalpedido = (valortotal + frete - desconto).toFixed(2);
-    
-            const resumo = [
-                `Valor Total dos Itens: R$ ${valortotal.toFixed(2)}`,
-                `Frete: R$ ${frete.toFixed(2)}`,
-                `Desconto: R$ ${desconto.toFixed(2)}`,
-                `Valor de Entrada: R$ ${valorentrada.toFixed(2)}`,
-                `Valor Restante: R$ ${valorrestante.toFixed(2)}`,
-                `Parcelas: ${parcelas}`,
-                `Valor Total do Pedido: R$ ${valortotalpedido}`
-            ];
-    
-            resumo.forEach((linha, i) => {
-                doc.text(linha, 14, y + i * 10);
-            });
-    
-            doc.save("itens_pedido.pdf");
-        }).catch(err => {
-            console.error("Erro ao gerar PDF:", err);
-            alert("Erro ao gerar PDF.");
-        });
-    
-        document.body.removeChild(clone); // remove clone após exportação
-    });
-    
-    
-});
-
-document.getElementById('cadastrarBtn').addEventListener('click', async function () {
-    const clienteId = localStorage.getItem("venda_cliente_id");
-    const usuarioId = localStorage.getItem("usuario_id");
-
-    const pedido = {
-        data: document.getElementById('data').value,
-        desconto_revendedor: parseFloat(document.getElementById('desconto').value) || 0,
-        frete: parseFloat(document.getElementById('frete').value) || 0,
-        valor_total: parseFloat(document.getElementById('valortot').value),
-        valor_entrada: parseFloat(document.getElementById('valorentrada').value),
-        qtd_parcela: parseInt(document.getElementById('parcelas').value) || 0,
-        data_entrega: document.getElementById('dataentrega').value,
-        status_pedido: document.getElementById('status').value,
-        forma_pagamento: document.getElementById('formapagamento').value,
-        cliente: { id: parseInt(clienteId) },
-        usuario: { id: parseInt(usuarioId) },
-        tipo_entrega: document.getElementById('tipo_entrega').value
-    };
 
     try {
-        const token = localStorage.getItem("token");
-        const response = await fetch('../pedido', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(pedido)
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            if (result.id) {
-                localStorage.setItem("pedido_id", result.id);
-                await enviarProdutosDoPedido(); 
-            }
-
-            alert("Pedido cadastrado com sucesso!");
-            window.location.href = "/buscarpedido";
-        } else {
-            const error = await response.text();
-            alert("Erro ao cadastrar pedido: " + error);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${url}?nome=${encodeURIComponent(query)}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-    } catch (err) {
-        console.error("Erro na requisição:", err);
-        alert("Erro ao tentar cadastrar o pedido.");
+      });
+
+      if (!response.ok) throw new Error('Erro ao buscar produtos');
+
+      let data = await response.json();
+      if (!Array.isArray(data)) data = [data];
+
+      suggestionBox.innerHTML = data.slice(0, 5).map(item =>
+        `<div data-id="${item.id}" data-valor="${item.valorvarejo}">${item[displayKey]}</div>`
+      ).join('');
+      suggestionBox.style.display = 'block';
+
+      suggestionBox.querySelectorAll('div').forEach(div => {
+        div.addEventListener('click', () => {
+          input.value = div.textContent;
+          produtoIdSelecionado = div.dataset.id;
+          const valor = parseFloat(div.dataset.valor);
+          valorInput.value = valor.toFixed(2);
+
+          const quantidade = parseFloat(quantidadeInput.value);
+          if (!isNaN(quantidade)) {
+            valorTotalInput.value = (quantidade * valor).toFixed(2);
+          }
+
+          M.updateTextFields();
+          limparSugestoes(suggestionBox);
+        });
+      });
+    } catch (error) {
+      console.error('Erro ao buscar produtos:', error);
+      M.toast({ html: `Erro ao buscar produtos: ${error.message}`, classes: 'red' });
     }
-});
+  });
+}
+
+function setupClienteAutocomplete(inputId, url, suggestionId, displayKey) {
+  const input = document.getElementById(inputId);
+  const suggestionBox = document.getElementById(suggestionId);
+
+  input.addEventListener('input', async () => {
+    const query = input.value.trim();
+    if (!query) return limparSugestoes(suggestionBox);
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${url}?nome=${encodeURIComponent(query)}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+
+      suggestionBox.innerHTML = '';
+      suggestionBox.style.display = 'block';
+
+      data.forEach(item => {
+        const div = document.createElement('div');
+        div.textContent = item[displayKey];
+        div.addEventListener('click', () => {
+          input.value = item[displayKey];
+          localStorage.setItem('pedido_cliente_id', item.id);
+          preencherCamposCliente(item); 
+          limparSugestoes(suggestionBox);
+        });
+        suggestionBox.appendChild(div);
+      });
+    } catch (error) {
+      console.error('Erro ao buscar sugestões:', error);
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if (!suggestionBox.contains(e.target) && e.target !== input) {
+      limparSugestoes(suggestionBox);
+    }
+  });
+}
+
+function preencherCamposCliente(cliente) {
+  if (cliente.tipo_entrega) {
+    const tipoEntregaSelect = document.getElementById('tipoentrega');
+    tipoEntregaSelect.value = cliente.tipo_entrega.toLowerCase();
+    M.FormSelect.init(tipoEntregaSelect);
+  }
+
+  if (cliente.forma_pagamento) {
+    const formaPagamentoSelect = document.getElementById('formapagamento');
+    formaPagamentoSelect.value = cliente.forma_pagamento.toLowerCase();
+    M.FormSelect.init(formaPagamentoSelect);
+  }
+
+  M.updateTextFields();
+}
+
+function limparSugestoes(suggestionBox) {
+  suggestionBox.innerHTML = '';
+  suggestionBox.style.display = 'none';
+}
 
 async function enviarProdutosDoPedido() {
-    const pedidoId = localStorage.getItem("pedido_id");
-    const usuarioId = localStorage.getItem("usuario_id");
+  const pedidoId = localStorage.getItem('pedido_id');
+  const linhas = document.querySelectorAll('#tabelaRegistros tr');
+  console.log("Total de linhas encontradas:", linhas.length);
 
-    if (!pedidoId || !usuarioId) {
-        alert("Erro: ID do pedido ou do usuário não encontrado.");
-        return;
-    }
+  const produtosPayload = Array.from(linhas).map(linha => {
+    const colunas = linha.querySelectorAll('td');
+    return {
+      quantidade: parseInt(colunas[1].textContent.trim()),
+      observacao: colunas[6].textContent.trim(),
+      nome: colunas[0].textContent.trim(),
+      tamanho: colunas[2].textContent.trim(),
+      desconto: parseFloat(colunas[4].textContent.trim()),
+      valor_total: parseFloat(colunas[5].textContent.trim()),
+      valor_unitario: parseFloat(colunas[3].textContent.trim()),
+      produto: { id: parseInt(linha.dataset.id) },
+      pedido: { id: parseInt(pedidoId) }
+    };
+  });
 
-    const linhas = document.querySelectorAll('#tabelaRegistros tbody tr');
-    const produtosPayload = [];
+  if (produtosPayload.length === 0) {
+    M.toast({ html: 'Nenhum produto válido para enviar.', classes: 'yellow' });
+    return;
+  }
 
-    linhas.forEach(linha => {
-        const colunas = linha.querySelectorAll('td');
-        const nome = colunas[0].textContent.trim();
-        const quantidade = parseInt(colunas[1].textContent.trim());
-        const tamanho = colunas[2].textContent.trim();
-        const valorunitario = parseFloat(colunas[3].textContent.trim());
-        const valortotal = parseFloat(colunas[4].textContent.trim());
-        const observacao = colunas[5].textContent.trim();
-        const produtoId = linha.dataset.id;
-
-        if (!produtoId) {
-            console.warn("Produto sem ID encontrado na linha. Ignorando.");
-            return;
-        }
-
-        produtosPayload.push({
-            nome,
-            quatidade: quantidade,
-            tamanho,
-            valorunitario,
-            valortotal,
-            observacao,
-            produto: { id: parseInt(produtoId) },
-            pedido: { id: parseInt(pedidoId) },
-            usuario: { id: parseInt(usuarioId) }
-        });
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch('${BASE_URL}/pedidoproduto', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(produtosPayload)
     });
 
-    if (produtosPayload.length === 0) {
-        alert("Nenhum produto válido para enviar.");
-        return;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Erro ao salvar produtos: ${errorText}`);
     }
 
-    try {
-        const token = localStorage.getItem("token");
-        const response = await fetch("../pedidoproduto", {
-            method: "POST",
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(produtosPayload)
-        });
+    limparLocalStorageExcetoTokenEUsuario();
+    M.toast({ html: 'Produtos do pedido salvos com sucesso!', classes: 'green' });
 
-        if (response.ok) {
-            localStorage.removeItem("venda_cliente_id");
-            localStorage.removeItem("pedido_produto_ids");
-            localStorage.removeItem("pedido_id");
-
-            alert("Produtos do pedido salvos com sucesso!");
-        } else {
-            const errorText = await response.text();
-            alert("Erro ao salvar produtos do pedido: " + errorText);
-        }
-    } catch (error) {
-        console.error("Erro na requisição dos produtos:", error);
-        alert("Erro inesperado ao salvar os produtos.");
-    }
+  } catch (error) {
+    M.toast({ html: `Erro ao enviar produtos: ${error.message}`, classes: 'red' });
+  }
 }
 
-
-//Função pra forma de pagamento vir do cliente
+function limparLocalStorageExcetoTokenEUsuario() {
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
+  localStorage.clear();
+  if (token) localStorage.setItem('token', token);
+  if (userId) localStorage.setItem('userId', userId);
+}

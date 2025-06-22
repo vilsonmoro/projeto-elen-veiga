@@ -1,15 +1,7 @@
+import { BASE_URL } from './url_base'
 let vendedoresPaginados = [];
 let currentPage = 1;
 const itemsPerPage = 10;
-
-function confirmLogout(event) {
-    event.preventDefault();
-    const confirmed = confirm("Você deseja realmente sair da aplicação?");
-    if (confirmed) {
-        localStorage.clear(); // Limpa todas as informações do localStorage
-        window.location.href = "/login";
-    }
-}
 
 async function searchVendedor() {
     const token = localStorage.getItem('token');
@@ -26,7 +18,7 @@ async function searchVendedor() {
     if (status) params.append('status', status);
 
     try {
-        const response = await fetch(`/vendedor/buscar?${params.toString()}`, {
+        const response = await fetch(`${BASE_URL}/vendedor/buscar?${params.toString()}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -35,13 +27,14 @@ async function searchVendedor() {
         });
 
         if (!response.ok) {
-            alert('Erro ao buscar vendedores: ' + response.statusText);
+            M.toast({ html: `Erro ao buscar vendedores: ${response.statusText}`, classes: 'red' });
             return;
         }
 
         const vendedores = await response.json();
         populateResultsTable(vendedores);
     } catch (error) {
+        M.toast({ html: `Erro de conexão: ${error.message}`, classes: 'red' });
         console.error('Erro:', error);
     }
 }
@@ -56,7 +49,7 @@ async function editvendedor(codigo) {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`/vendedor/${codigo}`, {
+        const response = await fetch(`${BASE_URL}/vendedor/${codigo}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -65,7 +58,7 @@ async function editvendedor(codigo) {
         });
 
         if (!response.ok) {
-            alert('Erro ao buscar vendedor: ' + response.statusText);
+            M.toast({ html: `Erro ao buscar vendedor: ${response.statusText}`, classes: 'red' });
             return;
         }
 
@@ -75,11 +68,11 @@ async function editvendedor(codigo) {
         localStorage.setItem('vendedorParaEditar', JSON.stringify(vendedor));
 
         // Redireciona para a página de alteração
-        window.location.href = '/alterarvendedor';
+        window.location.href = './alterarvendedor.html';
 
     } catch (error) {
+        M.toast({ html: `Erro inesperado ao buscar os dados do vendedor.`, classes: 'red' });
         console.error('Erro ao buscar vendedor:', error);
-        alert('Erro inesperado ao buscar os dados do vendedor.');
     }
 }
 
@@ -90,7 +83,7 @@ async function confirmDelete(id) {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`/vendedor/${id}`, {
+        const response = await fetch(`${BASE_URL}/vendedor/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -99,15 +92,14 @@ async function confirmDelete(id) {
         });
 
         if (response.ok) {
-            alert("Vendedor excluído com sucesso!");
+            M.toast({ html: 'Vendedor excluído com sucesso!', classes: 'green' });
             searchVendedor(); // Recarrega a lista
         } else {
             const errorData = await response.json();
-            alert("Erro ao excluir vendedor: " + (errorData.message || response.statusText));
+            M.toast({ html: `Erro ao excluir vendedor: ${errorData.message || response.statusText}`, classes: 'red' });
         }
     } catch (error) {
-        console.error("Erro ao excluir vendedor:", error);
-        alert("Erro inesperado ao tentar excluir o vendedor.");
+        M.toast({ html: `Erro ao excluir vendedor: ${error.message}`, classes: 'red' });
     }
 }
 
@@ -135,9 +127,6 @@ function renderPage() {
             <td>
                 <button class="action-button" onclick="editvendedor('${vendedor.id}')">
                     <span class="material-icons">edit</span>
-                </button>
-                <button class="action-button" onclick="confirmDelete('${vendedor.id}')">
-                    <span class="material-icons">delete</span>
                 </button>
             </td>
         `;
@@ -173,34 +162,3 @@ function clearSearch() {
     document.getElementById('nextButton').disabled = true;
 }
 
-// Validação para submissão do formulário de cadastro de vendedor
-document.addEventListener('DOMContentLoaded', function () {
-    const botaoCadastro = document.querySelector('.btn'); // Certifique-se de que essa é a classe do botão de envio
-
-    if (botaoCadastro) {
-        botaoCadastro.addEventListener('click', function (e) {
-            const nome = document.getElementById('nome').value.trim();
-            const desconto = document.getElementById('desconto') ? document.getElementById('desconto').value.trim() : '';
-            const status = document.getElementById('status').value;
-
-            const mensagens = [];
-
-            if (!nome) mensagens.push("Nome");
-            if (!desconto) mensagens.push("Desconto");
-            if (!status) mensagens.push("Status");
-
-            if (mensagens.length > 0) {
-                e.preventDefault();
-                alert(`Os seguintes campos são obrigatórios: ${mensagens.join(', ')}`);
-                return;
-            }
-
-            // Validação opcional do desconto
-            if (desconto && (parseFloat(desconto) < 0 || parseFloat(desconto) > 100)) {
-                e.preventDefault();
-                alert('O desconto deve ser um valor entre 0 e 100.');
-                return;
-            }
-        });
-    }
-});

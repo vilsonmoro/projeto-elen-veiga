@@ -1,3 +1,4 @@
+import { BASE_URL } from './url_base'
 let usuariosPaginados = [];
 let currentPage = 1;
 const itemsPerPage = 10;
@@ -7,7 +8,7 @@ function confirmLogout(event) {
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear(); 
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }
 
@@ -23,7 +24,7 @@ async function searchUsers() {
     if (sobrenome) params.append('sobrenome', sobrenome);
 
     try {
-        const response = await fetch(`/usuario/buscar?${params.toString()}`, {
+        const response = await fetch(`${BASE_URL}/usuario/buscar?${params.toString()}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -32,13 +33,14 @@ async function searchUsers() {
         });
 
         if (!response.ok) {
-            alert('Erro ao buscar usuários: ' + response.statusText);
+            M.toast({ html: `Erro ao buscar usuários: ${response.statusText}`, classes: 'red' });
             return;
         }
 
         const usuarios = await response.json();
         populateResultsTable(usuarios);
     } catch (error) {
+        M.toast({ html: `Erro de conexão: ${error.message}`, classes: 'red' });
         console.error('Erro:', error);
     }
 }
@@ -99,7 +101,7 @@ async function editusuario(codigo) {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`/usuario/${codigo}`, {
+        const response = await fetch(`${BASE_URL}/usuario/${codigo}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -108,18 +110,18 @@ async function editusuario(codigo) {
         });
 
         if (!response.ok) {
-            alert('Erro ao buscar usuário: ' + response.statusText);
+            M.toast({ html: `Erro ao buscar usuário: ${response.statusText}`, classes: 'red' });
             return;
         }
 
         const usuario = await response.json();
 
         localStorage.setItem('usuarioParaEditar', JSON.stringify(usuario));
-        window.location.href = '/alterarusuario';
+        window.location.href = './alterarusuario.html';
 
     } catch (error) {
         console.error('Erro ao buscar usuário:', error);
-        alert('Erro inesperado ao buscar os dados do usuário.');
+        M.toast({ html: `Erro inesperado ao buscar os dados do usuário.`, classes: 'red' });
     }
 }
 
@@ -130,7 +132,7 @@ async function confirmDelete(id) {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`/usuario/${id}`, {
+        const response = await fetch(`${BASE_URL}/usuario/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -139,15 +141,16 @@ async function confirmDelete(id) {
         });
 
         if (response.ok) {
-            alert("Usuário excluído com sucesso!");
+            M.toast({ html: 'Usuário excluído com sucesso!', classes: 'green' });
             searchUsers(); // Recarrega a lista
         } else {
             const errorData = await response.json();
-            alert("Erro ao excluir usuário: " + (errorData.message || response.statusText));
+            M.toast({ html: `Erro ao excluir usuário: ${errorData.message}`, classes: 'red' });
+            console.log("Erro ao excluir usuário: " + (errorData.message || response.statusText));
         }
     } catch (error) {
         console.error("Erro ao excluir usuário:", error);
-        alert("Erro inesperado ao tentar excluir o usuário.");
+        M.toast({ html: `Erro inesperado ao tentar excluir o usuário.`, classes: 'red' });
     }
 }
 

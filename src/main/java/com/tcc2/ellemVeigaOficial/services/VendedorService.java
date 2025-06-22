@@ -33,7 +33,7 @@ public class VendedorService {
     public List<Vendedor> findAll(){
         return repository.findAll();
     }
-
+    
     public void delete(Long id){
         repository.deleteById(id);
     }

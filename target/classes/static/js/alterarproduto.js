@@ -1,9 +1,11 @@
+import { BASE_URL } from './url_base'
+
 function confirmLogout(event) {
     event.preventDefault();
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }
 
@@ -17,8 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const produtoData = localStorage.getItem('produtoParaEditar');
 
     if (!produtoData) {
-        alert('Nenhum produto selecionado para edição.');
-        window.location.href = '/buscarproduto';
+        M.toast({ html: 'Nenhum produto selecionado para edição.', classes: 'yellow' });
+        window.location.href = './buscarproduto.html';
         return;
     }
 
@@ -74,9 +76,23 @@ document.querySelector('.btn').addEventListener('click', async function (e) {
     const valoratacado = parseFloat(document.getElementById('valoratacado').value);
     const valorvarejo = parseFloat(document.getElementById('valorvarejo').value);
 
+    const camposFaltando = [];
+    if (!nome) camposFaltando.push('Nome');
+    if (!custoProduto) camposFaltando.push('Custo do produto');
+    if (!fatormult) camposFaltando.push('Fator de multiplicação');
+    if (!valoratacado) camposFaltando.push('Valor no atacado');
+    if (!valorvarejo) camposFaltando.push('Valor no varejo');
+
+    if (camposFaltando.length > 0) {
+        M.toast({ html: `Preencha os seguintes campos obrigatórios: ${camposFaltando.join(', ')}`, classes: 'yellow' });
+        //alert(`Preencha os seguintes campos obrigatórios: ${camposFaltando.join(', ')}`);
+        return;
+    }
+
     const produtoData = localStorage.getItem('produtoParaEditar');
     if (!produtoData) {
-        alert('Produto não encontrado.');
+        M.toast({ html: 'Produto não encontrado.', classes: 'yellow' });
+        //alert('Produto não encontrado.');
         return;
     }
 
@@ -85,7 +101,8 @@ document.querySelector('.btn').addEventListener('click', async function (e) {
 
     const usuarioId = localStorage.getItem('userId');
     if (!usuarioId) {
-        alert('ID do usuário não encontrado. Faça login novamente.');
+        M.toast({ html: 'ID do usuário não encontrado. Faça login novamente.', classes: 'yellow' });
+        //alert('ID do usuário não encontrado. Faça login novamente.');
         return;
     }
 
@@ -117,7 +134,7 @@ document.querySelector('.btn').addEventListener('click', async function (e) {
 
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`/produto/${id}`, {
+        const response = await fetch(`${BASE_URL}/produto/${id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -128,7 +145,7 @@ document.querySelector('.btn').addEventListener('click', async function (e) {
 
         if (response.ok) {
             M.toast({ html: 'Produto atualizado com sucesso!', classes: 'green' });
-            window.location.href = '/buscarproduto';
+            window.location.href = './buscarproduto.html';
         } else {
             const erro = await response.json();
             const errorMsg = errorData.message || errorData.error || 'Erro desconhecido.';

@@ -1,9 +1,10 @@
+import { BASE_URL } from './url_base'
 function confirmLogout(event) {
     event.preventDefault();
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear(); // Limpa todas as informações do localStorage
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }
 
@@ -32,7 +33,7 @@ async function exibirPedidos() {
     const dataFim = formatarData(ultimoDia);
 
     try {
-        const response = await fetch(`http://localhost:8080/pedido/buscar?dataInicio=${dataInicio}&dataFim=${dataFim}`);
+        const response = await fetch(`${BASE_URL}/pedido/buscar?dataInicio=${dataInicio}&dataFim=${dataFim}`);
         const pedidos = await response.json();
 
         // Limpar a lista antes de adicionar os itens
@@ -69,7 +70,7 @@ async function exibirPedidos() {
 
 // Função para buscar os dados da API e criar o gráfico
 function carregarDadosVendas() {
-    fetch('http://localhost:8080/produtovenda/vendasmes')
+    fetch('${BASE_URL}/produtovenda/vendasmes')
         .then(response => {
             if (!response.ok) throw new Error('Erro ao carregar dados da API');
             return response.json();
@@ -78,7 +79,7 @@ function carregarDadosVendas() {
             criarGraficoPizza(data); // Passa os dados para criar o gráfico
         })
         .catch(error => {
-            alert('Erro ao carregar os dados: ' + error);
+            M.toast({ html: `Erro ao carregar os dados: ${error}`, classes: 'red' });
         });
 }
 
@@ -139,7 +140,7 @@ async function carregarFinanceiroDoMes() {
     const dataFimStr = formatarData(fimDoMes);
 
     try {
-        const response = await fetch(`http://localhost:8080/venda/fluxo-caixa?dataInicio=${dataInicioStr}&dataFim=${dataFimStr}`);
+        const response = await fetch(`${BASE_URL}/venda/fluxo-caixa?dataInicio=${dataInicioStr}&dataFim=${dataFimStr}`);
         if (!response.ok) {
             throw new Error(`Erro na requisição: ${response.status}`);
         }

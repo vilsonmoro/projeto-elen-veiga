@@ -41,7 +41,7 @@
 			<div class="col s12">
 				<ul class="tabs">
 					<li class="tab col s3"><a class="active" href="#pedido">Pedido</a></li>
-					<li class="tab col s3"><a href="#itens">Itens</a></li>
+					<li class="tab col s3"><a href="#itens">Produtos</a></li>
 					<li class="tab col s3"><a href="#pagamento">Pagamento</a></li>
 				</ul>
 			</div>
@@ -52,7 +52,7 @@
 						<label for="data">Data *</label>
 					</div>
 					<div class="input-field input-with-icon-right">
-						<input type="text" id="cliente" required autocomplete="off">
+						<input type="text" id="cliente" autocomplete="off" required>
 						<div class="suggestions" id="cliente-suggestions"></div>
 						<label for="cliente">Cliente</label>
 						<i class="material-icons">search</i>
@@ -62,31 +62,11 @@
 						<label for="dataentrega">Data de entrega</label>
 					</div>
 					<div class="input-field">
-						<select id="formapagamento" required>
-							<option value="" disabled selected>Escolha a forma de pagamento</option>
-							<option value="PIX">Pix</option>
-							<option value="DINHEIRO">Dinheiro</option>
-							<option value="CREDITO">Crédito</option>
-							<option value="DEBITO">Débito</option>
-							<option value="TED">TED</option>
-						</select>
-						<label for="formapagamento">Forma de Pagamento *</label>
-					</div>
-					<div class="input-field">
-						<select id="tipo_entrega">
-							<option value="" disabled selected>Escolha uma opção</option>
-							<option value="RETIRADA">Retirada</option>
-							<option value="SEDEX">Sedex</option>
-							<option value="TRANSPORTADORA">Transportadora</option>
-							<option value="CARRO">Carro</option>
-						</select>
-						<label for="tipo_entrega">Tipo de Entrega *</label>
-					</div>
-					<div class="input-field">
 						<select id="status" required>
-							<option value="" disabled selected>Escolha seu status</option>
-							<option value="ativo">Ativo</option>
-							<option value="inativo">Inativo</option>
+							<option value="aguardando_aprovacao" disabled selected>Aguardando Aprovação</option>
+							<option value="aprovado">Aprovado</option>
+							<option value="reprovado">Reprovado</option>
+							<option value="finalizado">Finalizado</option>
 						</select>
 						<label for="status">Status *</label>
 					</div>
@@ -98,13 +78,14 @@
 					<button id="addRegistro" class="btn">Adicionar Item</button>
 				</div>
 				
-				<table id="tabelaRegistros">
+				<table>
 					<thead>
 						<tr>
 							<th>Nome</th>
 							<th>Quantidade</th>
 							<th>Tamanho</th>
 							<th>Valor Unitário</th>
+							<th>Desconto</th>
 							<th>Valor Total</th>
 							<th>Observação</th>
 							<th>Ações</th>
@@ -120,10 +101,10 @@
 							<h2>Item</h2>
 							<form id="produtoForm">
 								<div class="input-field">
-									<input type="text" id="nome" required autocomplete="off">
-									<div class="suggestions" id="nome-suggestions"></div> <!-- Adicionado aqui -->
+									<input type="text" id="nome" autocomplete="off" required>
+									<div class="suggestions" id="nome-suggestions"></div>
 									<label for="nome">Nome</label>
-								</div>								
+								</div>
 								<div class="input-field">
 									<input type="number" id="quantidade" required>
 									<label for="quantidade">Quantidade *</label>
@@ -137,8 +118,8 @@
 									<label for="valor">Valor Unitário *</label>
 								</div>
 								<div class="input-field">
-									<input type="number" id="valortotal" required>
-									<label for="valortotal">Valor Total</label>
+									<input type="number" id="desconto">
+									<label for="desconto">Desconto</label>
 								</div>
 								<div class="input-field">
 									<textarea id="observacao" class="materialize-textarea"></textarea>
@@ -146,7 +127,7 @@
 								</div>
 
 								<div class="button-wrapper">
-									<button id= "salvarpopup" type="submit" class="btn">Salvar</button>
+									<button type="submit" id="salvarpopup" class="btn">Salvar</button>
 								</div>
 							</form>
 						</div>
@@ -155,16 +136,38 @@
 			<div id="pagamento" class="col s12">
 				<div class="center-inputs">
 					<div class="input-field">
-						<input type="text" id="valortot" required>
-						<label for="valortot">Valor total *</label>
-					</div>
-					<div class="input-field">
 						<input type="number" id="frete">
 						<label for="frete">Frete</label>
 					</div>
 					<div class="input-field">
-						<input type="number" id="desconto">
-						<label for="desconto">Desconto</label>
+						<select id="tipoentrega" required>
+							<option value="" disabled selected>Escolha o tipo de entrega</option>
+							<option value="carro">Carro</option>
+							<option value="sedex">SEDEX</option>
+							<option value="retirada">Retirada</option>
+							<option value="transportadora">Transportadora</option>
+						</select>
+						<label for="status">Tipo de entrega *</label>
+					</div>
+					<div class="input-field">
+						<input type="text" id="valortotal" required>
+						<label for="valortot">Valor total *</label>
+					</div>
+					<div class="input-field">
+						<input type="number" id="descrevend">
+						<label for="descrevend">Desconto para revendedor</label>
+					</div>
+					
+					<div class="input-field">
+						<select id="formapagamento" required>
+							<option value="" disabled selected>Escolha a forma de pagamento</option>
+							<option value="pix">Pix</option>
+							<option value="dinheiro">Dinheiro</option>
+							<option value="credito">Crédito</option>
+							<option value="debito">Débito</option>
+							<option value="ted">TED</option>
+						</select>
+						<label for="formapagamento">Forma de Pagamento *</label>
 					</div>
 					<div class="input-field">
 						<input type="number" id="valorentrada" required>
@@ -178,8 +181,9 @@
 						<input type="number" id="parcelas">
 						<label for="parcelas">Parcelas *</label>
 					</div>
-					<button id="cadastrarBtn" class="btn waves-effect waves-light" type="submit">Cadastrar</button>
-					<button id="exportarPDF" class="btn waves-effect waves-light">Exportar em PDF</button>
+					<div class="button-wrapper">
+						<button id="cadastrarBtn" class="btn waves-effect waves-light" type="submit">Cadastrar</button>
+					</div>
 				</div>
 			</div>
 			

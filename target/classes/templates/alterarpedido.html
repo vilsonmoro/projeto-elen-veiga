@@ -8,6 +8,11 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 	<link rel="stylesheet" type="text/css" href="/css/alterarpedido.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+		
+
 </head>
 <body>
     <div class="navbar">
@@ -19,30 +24,31 @@
             <a href="#" onclick="confirmLogout(event)" title="Sair"><span class="material-icons">logout</span></a>
         </div>
     </div>
+
     <div class="sidebar">
         <ul>
-            <li><a href="/buscarcliente" title="Cliente"><span class="material-icons">people</span></a></li>
+            <li><a href="/buscarcliente" title="Cliente"><span class="material-icons">people</span></a></li> 
             <li><a href="/buscarproduto" title="Produto"><span class="material-icons">checkroom</span></a></li>
-            <li><a href="/buscarpedido" title="Pedido" class="active"><span class="material-icons">list_alt</span></a></li>
-            <li><a href="/buscarvenda" title="Venda"><span class="material-icons">attach_money</span></a></li>
+            <li><a href="/buscarpedido" title="Pedido" class="active"><span class="material-icons">list_alt</span></a></li> 
+            <li><a href="/buscarvenda" title="Venda"><span class="material-icons">attach_money</span></a></li> 
             <li><a href="/relatorio" title="Relatório"><span class="material-icons">assignment</span></a></li>
             <li><a href="/buscarvendedor" title="Vendedor"><span class="material-icons">support_agent</span></a></li>
         </ul>
     </div>
 	<div class="content">
-		<h1>Editar Pedido</h1>
+		<h1>Editar Pedido</h1>	
 		<div class="row">
 			<div class="col s12">
 				<ul class="tabs">
 					<li class="tab col s3"><a class="active" href="#pedido">Pedido</a></li>
-					<li class="tab col s3"><a href="#itens">Itens</a></li>
+					<li class="tab col s3"><a href="#itens">Produtos</a></li>
 					<li class="tab col s3"><a href="#pagamento">Pagamento</a></li>
 				</ul>
 			</div>
 			<div id="pedido" class="col s12">
 				<div class="center-inputs">
 					<div class="input-field">
-						<input type="text" id="codigo">
+						<input type="text" id="codigo" readonly>
 						<label for="codigo">Código</label>
 					</div>
 					<div class="input-field">
@@ -50,11 +56,8 @@
 						<label for="data">Data *</label>
 					</div>
 					<div class="input-field">
-						<input type="number" id="descrevend">
-						<label for="descrevend">Desconto para revendedor</label>
-					</div>
-					<div class="input-field">
-						<input type="text" id="cliente">
+						<input type="text" id="cliente" autocomplete="off">
+						<div class="suggestions" id="cliente-suggestions"></div>
 						<label for="cliente">Cliente</label>
 					</div>
 					<div class="input-field">
@@ -63,9 +66,10 @@
 					</div>
 					<div class="input-field">
 						<select id="status" required>
-							<option value="" disabled selected>Escolha seu status</option>
-							<option value="ativo">Ativo</option>
-							<option value="inativo">Inativo</option>
+							<option value="aguardando_aprovacao" disabled selected>Aguardando Aprovação</option>
+							<option value="aprovado">Aprovado</option>
+							<option value="reprovado">Reprovado</option>
+							<option value="finalizado">Finalizado</option>
 						</select>
 						<label for="status">Status *</label>
 					</div>
@@ -85,6 +89,7 @@
 							<th>Tamanho</th>
 							<th>Valor Unitário</th>
 							<th>Desconto</th>
+							<th>Valor Total</th>
 							<th>Observação</th>
 							<th>Ações</th>
 						</tr>
@@ -99,7 +104,8 @@
 							<h2>Item</h2>
 							<form id="produtoForm">
 								<div class="input-field">
-									<input type="text" id="nome" required>
+									<input type="text" id="nome" autocomplete="off" required>
+									<div class="suggestions" id="nome-suggestions"></div>
 									<label for="nome">Nome</label>
 								</div>
 								<div class="input-field">
@@ -124,7 +130,7 @@
 								</div>
 
 								<div class="button-wrapper">
-									<button type="submit" class="btn">Salvar</button>
+									<button type="submit" id="salvarpopup" class="btn">Salvar</button>
 								</div>
 							</form>
 						</div>
@@ -133,18 +139,24 @@
 			<div id="pagamento" class="col s12">
 				<div class="center-inputs">
 					<div class="input-field">
-						<input type="text" id="valortot" required>
-						<label for="valortot">Valor total *</label>
-					</div>
-					<div class="input-field">
 						<input type="number" id="frete">
 						<label for="frete">Frete</label>
 					</div>
 					<div class="input-field">
-						<select id="status" required>
-							<option value="" disabled selected>Escolha seu frete</option>
-							<option value="ativo">Ativo</option>
-							<option value="inativo">Inativo</option>
+						<input type="text" id="valortotal" required>
+						<label for="valortot">Valor total *</label>
+					</div>
+					<div class="input-field">
+						<input type="number" id="descrevend">
+						<label for="descrevend">Desconto para revendedor</label>
+					</div>
+					<div class="input-field">
+						<select id="tipoentrega" required>
+							<option value="" disabled selected>Escolha o tipo de entrega</option>
+							<option value="carro">Carro</option>
+							<option value="sedex">SEDEX</option>
+							<option value="retirada">Retirada</option>
+							<option value="transportadora">Transportadora</option>
 						</select>
 						<label for="status">Tipo de entrega *</label>
 					</div>
@@ -173,7 +185,7 @@
 					</div>
 					<div class="button-wrapper">
 						<button id="salvarBtn" class="btn waves-effect waves-light" type="submit">Salvar</button>
-						<button id="exportarBtn" class="btn waves-effect waves-light" type="button" onclick="exportarCadastro()">Exportar</button>
+						<button id="exportarPDF" class="btn waves-effect waves-light" type="button" onclick="exportarCadastro()">Exportar</button>
 					</div>
 				</div>
 			</div>

@@ -1,3 +1,4 @@
+import { BASE_URL } from './url_base'
 let vendasPaginados = [];
 let currentPage = 1;
 const itemsPerPage = 10;
@@ -7,49 +8,45 @@ function confirmLogout(event) {
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }
 
 async function searchVenda() {
-	const codigo = document.getElementById('codigo').value.trim();
-	const cliente = document.getElementById('cliente').value.trim();
+    const codigo = document.getElementById('codigo').value.trim();
+    const cliente = document.getElementById('cliente').value.trim();
     const pedido = document.getElementById('pedido').value.trim();
-	const dataInicio = document.getElementById('dataInicio').value.trim();
+    const dataInicio = document.getElementById('dataInicio').value.trim();
     const dataFim = document.getElementById('dataFim').value.trim();
+    const token = localStorage.getItem('token');
 
-	const params = new URLSearchParams();
-	if (codigo) params.append('id', codigo);
-	if (cliente) params.append('cliente', cliente);
-    if (pedido) params.append('pedido', pedido); 
-    if (dataInicio) params.append('dataInicio', dataInicio); 
-    if (dataFim) params.append('dataFim', dataFim); 
+    const params = new URLSearchParams();
 
-	try {
-		const response = await fetch(`/venda/buscar?${params.toString()}`, {
-			method: 'GET',
-			headers: {
-				'Authorization': `Bearer ${token}`,
-				'Content-Type': 'application/json'
-			}
-		});
+    if (codigo) params.append('idVenda', codigo);
+    if (cliente) params.append('nomeCliente', cliente);
+    if (pedido) params.append('idPedido', pedido);
+    if (dataInicio) params.append('dataInicial', dataInicio);
+    if (dataFim) params.append('dataFinal', dataFim);
 
-		if (!response.ok) {
-			throw new Error('Erro ao buscar vendas');
-		}
+    try {
+        const response = await fetch(`${BASE_URL}/venda/buscar?${params.toString()}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
 
-		const vendas = await response.json();
+        if (!response.ok) {
+            throw new Error('Erro ao buscar vendas');
+        }
 
-		let filtrados = vendas;
-		if (codigo) {
-			filtrados = filtrados.filter(c => String(c.id).includes(codigo));
-		}
-
-		populateResultsTable(filtrados);
-	} catch (error) {
-		console.error(error);
-		M.toast({ html: `Erro ao buscar vendas: ${error}`, classes: 'red' });
-	}
+        const vendas = await response.json();
+        populateResultsTable(vendas);
+    } catch (error) {
+        console.error(error);
+        M.toast({ html: `Erro ao buscar vendas: ${error.message}`, classes: 'red' });
+    }
 }
 
 function populateResultsTable(vendas) {
@@ -60,14 +57,14 @@ function populateResultsTable(vendas) {
 
 function renderPage() {
     const tbody = document.querySelector('#resultsTable tbody');
-    tbody.innerHTML = ''; 
+    tbody.innerHTML = '';
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const pageItems = vendasPaginados.slice(startIndex, endIndex);
 
     if (pageItems.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Nenhuma vendas encontrada</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhuma venda encontrada</td></tr>';
         return;
     }
 
@@ -75,16 +72,12 @@ function renderPage() {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${venda.id}</td>
-            <td>${venda.cliente}</td>
-            <td>${venda.pedido}</td>
-            <td>${venda.dataInicio}</td>
-            <td>${venda.dataFim}</td>
+            <td>${venda.pedido?.id || '-'}</td>
+            <td>${venda.cliente?.nome || '-'}</td>
+            <td>R$ ${venda.valorTotal?.toFixed(2) || '0.00'}</td>
             <td>
                 <button class="action-button" onclick="editvenda('${venda.id}')">
                     <span class="material-icons">edit</span>
-                </button>
-                <button class="action-button" onclick="confirmDelete('${venda.id}')">
-                    <span class="material-icons">delete</span>
                 </button>
             </td>
         `;
@@ -113,7 +106,7 @@ function clearSearch() {
     document.getElementById('dataInicio').value = '';
     document.getElementById('dataFim').value = '';
     document.querySelector('#resultsTable tbody').innerHTML = '';
-	vendasPaginados = [];
+    vendasPaginados = [];
     currentPage = 1;
     document.getElementById('pageInfo').textContent = 'Página 1';
     document.getElementById('prevButton').disabled = true;
@@ -121,10 +114,10 @@ function clearSearch() {
 }
 
 async function editvenda(codigo) {
-	const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`/venda/${codigo}`, {
+        const response = await fetch(`${BASE_URL}/venda/${codigo}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -133,46 +126,14 @@ async function editvenda(codigo) {
         });
 
         if (!response.ok) {
-            alert('Erro ao buscar venda: ' + response.statusText);
+            M.toast({ html: `Erro ao buscar venda: ${response.statusText}`, classes: 'red' });
             return;
         }
 
         const venda = await response.json();
-
         localStorage.setItem('vendaParaEditar', JSON.stringify(venda));
-
-        window.location.href = '/alterarvenda';
-
+        window.location.href = './alterarvenda.html';
     } catch (error) {
-        console.error('Erro ao buscar venda:', error);
-        alert('Erro inesperado ao buscar os dados do venda.');
-    }
-}
-
-async function confirmDelete(codigo) {
-	const confirmed = confirm("Tem certeza que deseja excluir esta venda?");
-    if (!confirmed) return;
-
-    const token = localStorage.getItem('token');
-
-    try {
-        const response = await fetch(`/venda/${codigo}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            alert("Venda excluído com sucesso!");
-            searchVenda();
-        } else {
-            const errorData = await response.json();
-            alert("Erro ao excluir o venda: " + (errorData.message || response.statusText));
-        }
-    } catch (error) {
-        console.error("Erro ao excluir o venda:", error);
-        alert("Erro inesperado ao tentar excluir o venda.");
+        M.toast({ html: `Erro inesperado ao buscar os dados da venda: ${error}`, classes: 'red' });
     }
 }

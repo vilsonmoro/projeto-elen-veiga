@@ -1,9 +1,10 @@
+import { BASE_URL } from './url_base'
 function confirmLogout(event) {
     event.preventDefault();
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }
 
@@ -80,13 +81,15 @@ async function enviarProduto() {
     var custoProduto = parseFloat(document.getElementById('custo').value) || 0;
 
     //Validações
-    if (!nome) {
-        M.toast({ html: 'O campo "Nome" é obrigatório.', classes: 'red' });
-        return;
-    }
+        const camposFaltando = [];
+    if (!nome) camposFaltando.push('Nome');
+    if (!custoProduto) camposFaltando.push('Custo do produto');
+    if (!fatormult) camposFaltando.push('Fator de multiplicação');
+    if (!valoratacado) camposFaltando.push('Valor no atacado');
+    if (!valorvarejo) camposFaltando.push('Valor no varejo');
 
-    if (custoProduto === 0) {
-        M.toast({ html: 'O custo do produto deve ser maior que zero.', classes: 'red' });
+    if (camposFaltando.length > 0) {
+        M.toast({ html: `Preencha os seguintes campos obrigatórios: ${camposFaltando.join(', ')}`, classes: 'red' });
         return;
     }
     
@@ -142,7 +145,7 @@ async function enviarProduto() {
     try {
         const token = localStorage.getItem('token');
 
-        const response = await fetch('/produto', {
+        const response = await fetch('${BASE_URL}/produto', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -169,7 +172,7 @@ function calcularValorVarejoEAtacado() {
     const fatorMult = parseFloat(document.getElementById('fatormult').value);
 
     if (isNaN(custo) || isNaN(fatorMult)) {
-        M.toast({ html: 'Preencha corretamente os campos de custo e fator multiplicador.', classes: 'red darken-2' });
+        M.toast({ html: 'Preencha corretamente os campos de custo e fator multiplicador.', classes: 'red' });
         return;
     }
 

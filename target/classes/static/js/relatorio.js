@@ -1,3 +1,4 @@
+import { BASE_URL } from './url_base'
 document.addEventListener('DOMContentLoaded', function() {
     M.AutoInit();
 
@@ -12,12 +13,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Validar datas
         if (!dataInicial || !dataFinal) {
-            alert('Por favor, preencha as datas inicial e final.');
+            M.toast({ html: 'Por favor, preencha as datas inicial e final.', classes: 'yellow' });
             return;
         }
 
         if (new Date(dataInicial) > new Date(dataFinal)) {
-            alert('A data inicial deve ser anterior ou igual à data final.');
+            M.toast({ html: 'A data inicial deve ser anterior ou igual à data final.', classes: 'yellow' });
             return;
         }
 
@@ -32,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('dataFinal', dataFinal);
 
         // Redirecionar para a página fluxocaixa
-        window.location.href = '/fluxocaixa';
+        window.location.href = './fluxocaixa.html';
     });
 });
 
@@ -41,6 +42,6 @@ function confirmLogout(event) {
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear(); // Limpa todas as informações do localStorage
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }

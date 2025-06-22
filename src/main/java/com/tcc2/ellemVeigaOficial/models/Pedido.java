@@ -43,6 +43,9 @@ public class Pedido {
 	@Column(name = "valent_ped", nullable = false, length = 100)
     private Float valor_entrada;
 
+    @Column(name = "valrest_ped", nullable = false, length = 100)
+    private Float valor_restante;
+
 	@Column(name = "qtdparcela_ped", nullable = false, length = 100)
     private int qtd_parcela;
 
@@ -68,4 +71,5 @@ public class Pedido {
     @Enumerated(EnumType.STRING)
     @Column(name = "tipent_ped", length = 25)
     private TipoEntrega tipo_entrega;
+
 }

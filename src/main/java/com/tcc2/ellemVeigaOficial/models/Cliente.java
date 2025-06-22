@@ -18,8 +18,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class Cliente {
     @Id
@@ -49,5 +47,22 @@ public class Cliente {
     @Enumerated(EnumType.STRING)
     @Column(name = "tippag_cli", length = 25)
     private FormaPagamento forma_pagamento;
+
+    public Cliente() {
+    }
+
+    public Cliente(Long id, String nome, String observacao, String logadouro, String cidade, String estado, String cep,
+            Usuario usuario, TipoEntrega tipo_entrega, FormaPagamento forma_pagamento) {
+        this.id = id;
+        this.nome = nome;
+        this.observacao = observacao;
+        this.logadouro = logadouro;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.cep = cep;
+        this.usuario = usuario;
+        this.tipo_entrega = tipo_entrega;
+        this.forma_pagamento = forma_pagamento;
+    }
 
 }

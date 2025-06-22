@@ -55,13 +55,13 @@ public class Produto {
     private Float precoCostura;
 	@Column(name = "embalagem_pro", length = 100)
     private Float embalagem;
-	@Column(name = "custo_pro", length = 100)
+	@Column(name = "custo_pro", nullable = false,length = 100)
     private Float custoProduto;
 	@Column(name = "fatormult_pro", nullable = false, length = 100)
     private Float fatormult;
-	@Column(name = "valoratacado_pro", length = 100)
+	@Column(name = "valoratacado_pro", nullable = false, length = 100)
     private Float valoratacado;
-	@Column(name = "valorvarejo_pro", length = 100)
+	@Column(name = "valorvarejo_pro", nullable = false, length = 100)
     private Float valorvarejo;
     @Column(name = "deslocamento_pro", length = 100)
     private Float deslocamento;

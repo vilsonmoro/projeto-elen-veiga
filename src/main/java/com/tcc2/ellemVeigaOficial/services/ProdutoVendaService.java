@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
 import com.tcc2.ellemVeigaOficial.dto.VendasPorProdutoDTO;
 import com.tcc2.ellemVeigaOficial.models.Produto;
@@ -22,19 +23,37 @@ public class ProdutoVendaService {
     @Autowired
     private VendaRepository vendaRepository;
 
-    public ProdutoVenda addProdutoVenda(ProdutoVenda produtoVenda){
-        if (produtoVenda.getProduto() != null && produtoVenda.getProduto().getId() != null) {
-            Produto produto = produtoRepository.findById(produtoVenda.getProduto().getId()).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-            produtoVenda.setProduto(produto);
+    @Transactional
+    public List<ProdutoVenda> addProdutoVendas(List<ProdutoVenda> produtoVendas) {
+        List<ProdutoVenda> savedList = new ArrayList<>();
+
+        for (ProdutoVenda pv : produtoVendas) {
+            // 🔍 Validar Produto
+            if (pv.getProduto() == null || pv.getProduto().getId() == null) {
+                throw new IllegalArgumentException("Produto é obrigatório e deve conter um ID válido.");
+            }
+
+            Produto produto = produtoRepository.findById(pv.getProduto().getId())
+                .orElseThrow(() -> new RuntimeException("Produto com ID " + pv.getProduto().getId() + " não encontrado"));
+
+            // 🔍 Validar Venda
+            if (pv.getVenda() == null || pv.getVenda().getId() == null) {
+                throw new IllegalArgumentException("Venda é obrigatória e deve conter um ID válido.");
+            }
+
+            Venda venda = vendaRepository.findById(pv.getVenda().getId())
+                .orElseThrow(() -> new RuntimeException("Venda com ID " + pv.getVenda().getId() + " não encontrada"));
+
+            // ✅ Associar entidades e salvar
+            pv.setProduto(produto);
+            pv.setVenda(venda);
+            savedList.add(repository.save(pv));
         }
 
-        if (produtoVenda.getVenda() != null && produtoVenda.getVenda().getId() != null) {
-            Venda venda = vendaRepository.findById(produtoVenda.getVenda().getId()).orElseThrow(() -> new RuntimeException("Venda não encontrada"));
-            produtoVenda.setVenda(venda);
-        }
-
-        return repository.save(produtoVenda);
+        return savedList;
     }
+
+
 
     public ProdutoVenda findById(Long id){
         return repository.findById(id).get();
@@ -66,6 +85,35 @@ public class ProdutoVendaService {
         
         return repository.save(produtoVenda);
     }
+
+    @Transactional
+    public List<ProdutoVenda> updateProdutosVenda(List<ProdutoVenda> produtosVenda) {
+        List<ProdutoVenda> atualizados = new ArrayList<>();
+
+        for (ProdutoVenda pv : produtosVenda) {
+            Long id = pv.getId();
+            if (id == null || !repository.existsById(id)) {
+                throw new RuntimeException("Relação produto x venda com ID " + id + " não encontrada");
+            }
+
+            if (pv.getProduto() != null && pv.getProduto().getId() != null) {
+                Produto produto = produtoRepository.findById(pv.getProduto().getId())
+                    .orElseThrow(() -> new RuntimeException("Produto com ID " + pv.getProduto().getId() + " não encontrado"));
+                pv.setProduto(produto);
+            }
+
+            if (pv.getVenda() != null && pv.getVenda().getId() != null) {
+                Venda venda = vendaRepository.findById(pv.getVenda().getId())
+                    .orElseThrow(() -> new RuntimeException("Venda com ID " + pv.getVenda().getId() + " não encontrada"));
+                pv.setVenda(venda);
+            }
+
+            atualizados.add(repository.save(pv));
+        }
+
+        return atualizados;
+    }
+
 
     public List<ProdutoVenda> buscarProdutoVendas(Long idVenda, String nomeProduto) {
         return repository.buscarProdutoVendas(idVenda, nomeProduto);

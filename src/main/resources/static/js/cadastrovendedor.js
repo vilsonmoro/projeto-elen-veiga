@@ -1,3 +1,4 @@
+import { BASE_URL } from './url_base'
 document.addEventListener('DOMContentLoaded', function () {
     const elems = document.querySelectorAll('select');
     M.FormSelect.init(elems);
@@ -8,7 +9,7 @@ function confirmLogout(event) {
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }
 
@@ -23,26 +24,20 @@ document.querySelector('.btn').addEventListener('click', async function (e) {
     const observacoes = document.getElementById('observacoes').value.trim();
 
     // Validações obrigatórias
-    let camposInvalidos = [];
+    const camposFaltando = [];
+    if (!nome) camposFaltando.push('Nome');
+    if (!desconto) camposFaltando.push('Desconto');
+    if (!status) camposFaltando.push('Status');
 
-    if (!nome) camposInvalidos.push("Nome");
-    if (!email) camposInvalidos.push("E-mail");
-    if (!desconto) camposInvalidos.push("Desconto");
-    if (!status) camposInvalidos.push("Status");
-
-    if (camposInvalidos.length > 0) {
-        M.toast({
-            html: `Os campos obrigatórios não foram preenchidos: ${camposInvalidos.join(', ')}`,
-            classes: 'red'
-        });
-        this.style.backgroundColor = '#FFE100';
+    if (camposFaltando.length > 0) {
+        M.toast({ html: `Preencha os seguintes campos obrigatórios: ${camposFaltando.join(', ')}`, classes: 'yellow' });
         return;
     }
 
     // Validação do valor do desconto
     const descontoValor = parseFloat(desconto);
     if (descontoValor < 0 || descontoValor > 100) {
-        alert('O desconto deve ser um valor entre 0 e 100.');
+        M.toast({ html: 'O desconto deve ser um valor entre 0 e 100.', classes: 'yellow' });
         this.style.backgroundColor = '#FFE100';
         return;
     }
@@ -50,14 +45,14 @@ document.querySelector('.btn').addEventListener('click', async function (e) {
     // Validação do e-mail
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
-        alert('Por favor, insira um e-mail válido.');
+        M.toast({ html: 'Por favor, insira um e-mail válido.', classes: 'yellow' });
         this.style.backgroundColor = '#FFE100';
         return;
     }
 
     // Validação do tamanho das observações
     if (observacoes.length > 250) {
-        alert('As observações devem ter no máximo 250 caracteres.');
+        M.toast({ html: 'As observações devem ter no máximo 250 caracteres.', classes: 'yellow' });
         this.style.backgroundColor = '#FFE100';
         return;
     }
@@ -79,7 +74,7 @@ document.querySelector('.btn').addEventListener('click', async function (e) {
 
     // Envio para o backend
     try {
-        const response = await fetch('/vendedor', {
+        const response = await fetch('${BASE_URL}/vendedor', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

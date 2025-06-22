@@ -15,6 +15,7 @@ import com.tcc2.ellemVeigaOficial.models.Venda;
 @Repository
 public interface ProdutoVendaRepository extends JpaRepository<ProdutoVenda, Long> {
     List<ProdutoVenda> findByVenda(Venda venda);
+    boolean existsByProdutoId(Long produtoId);
 
     @Query("SELECT pv FROM ProdutoVenda pv WHERE " +
            "(:codigoVenda IS NULL OR pv.venda.id = :codigoVenda) AND " +

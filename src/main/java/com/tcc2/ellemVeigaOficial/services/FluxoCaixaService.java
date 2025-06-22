@@ -66,7 +66,7 @@ public class FluxoCaixaService {
             for (ProdutoVenda produtoVenda : produtosVenda) {
                 Produto produto = produtoVenda.getProduto();
                 if (produto != null && produto.getCustoProduto() != null) {
-                    custoTotalVenda += produto.getCustoProduto() * produtoVenda.getQuatidade();
+                    custoTotalVenda += produto.getCustoProduto() * produtoVenda.getQuantidade();
                 }
             }
 

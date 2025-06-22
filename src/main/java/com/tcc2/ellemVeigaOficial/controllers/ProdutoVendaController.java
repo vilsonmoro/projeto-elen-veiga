@@ -1,6 +1,7 @@
 package com.tcc2.ellemVeigaOficial.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,30 +18,32 @@ import java.util.Date;
 import com.tcc2.ellemVeigaOficial.dto.VendasPorProdutoDTO;
 import com.tcc2.ellemVeigaOficial.models.ProdutoVenda;
 import com.tcc2.ellemVeigaOficial.services.ProdutoVendaService;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
-@RequestMapping("/produtovenda")
+@CrossOrigin
+@Tag(name = "Relacionamento Venda X Produto", description = "Operações relacionadas aos produtos de uma venda")
 public class ProdutoVendaController {
     private ProdutoVendaService service;
 
-    @PostMapping
-    public ResponseEntity<ProdutoVenda> addProdutoVenda(@RequestBody ProdutoVenda produtoVenda){
-        return ResponseEntity.ok(service.addProdutoVenda(produtoVenda));
+    @PostMapping("/produtovenda")
+    public ResponseEntity<?> criarProdutosVenda(@RequestBody List<ProdutoVenda> produtosVenda) {
+        List<ProdutoVenda> salvos = service.addProdutoVendas(produtosVenda);
+        return ResponseEntity.ok(salvos); // ou uma mensagem se preferir
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/produtovenda/{id}")
     public ResponseEntity<ProdutoVenda> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
-    @GetMapping
+    @GetMapping("/produtovenda")
     public ResponseEntity<List<ProdutoVenda>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/produtovenda/{id}")
     public ResponseEntity<ProdutoVenda> updateProdutoVenda(@PathVariable Long id, @RequestBody ProdutoVenda produtoVenda) {
         try {
             ProdutoVenda updateProdutoVenda = service.update(id, produtoVenda);
@@ -50,13 +53,23 @@ public class ProdutoVendaController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/produtovenda")
+    public ResponseEntity<List<ProdutoVenda>> updateProdutoVendas(@RequestBody List<ProdutoVenda> produtosVenda) {
+        try {
+            List<ProdutoVenda> atualizados = service.updateProdutosVenda(produtosVenda);
+            return ResponseEntity.ok(atualizados);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping("/produtovenda/{id}")
     public ResponseEntity<Void> deleteProdutoVenda(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/buscar")
+    @GetMapping("/produtovenda/buscar")
     public ResponseEntity<List<ProdutoVenda>> buscarProdutoVendas(
             @RequestParam(required = false) Long idVenda,
             @RequestParam(required = false) String nomeProduto) {
@@ -64,7 +77,7 @@ public class ProdutoVendaController {
         return ResponseEntity.ok(produtoVendas);
     }
 
-    @GetMapping("/vendasmes")
+    @GetMapping("/produtovenda/vendasmes")
     public ResponseEntity<List<VendasPorProdutoDTO>> vendasDoMes() {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -76,4 +89,5 @@ public class ProdutoVendaController {
         List<VendasPorProdutoDTO> vendas = service.buscarVendasPorProdutoNoPeriodo(primeiroDia, ultimoDia);
         return ResponseEntity.ok(vendas);
     }
+
 }

@@ -25,7 +25,7 @@ public class ProdutoVenda {
 	@Column(name = "codigo_pv")
     private Long id;
 	@Column(name = "qtd_pv", nullable = false, length = 100)
-    private int quatidade;
+    private int quantidade;
 	@Column(name = "tamanho_pv", nullable = false, length = 100)
     private String tamanho;
 	@Column(name = "desconto_pv", length = 100)

@@ -1,3 +1,4 @@
+import { BASE_URL } from './url_base'
 let dadosFiltrados = [];
 let paginaAtual = 1;
 const registrosPorPagina = 15;
@@ -13,11 +14,11 @@ function carregarRelatorio() {
     const formaPagamento = localStorage.getItem('formaPagamento');
 
     if (!dataInicio || !dataFim) {
-        alert('Por favor, informe a "dataInicial" e "dataFinal".');
+        M.toast({ html: 'Por favor, informe a data inicial e final do período.', classes: 'yellow' });
         return;
     }
 
-    let url = `http://localhost:8080/venda/fluxo-caixa?dataInicio=${dataInicio}&dataFim=${dataFim}`;
+    let url = `${BASE_URL}/venda/fluxo-caixa?dataInicio=${dataInicio}&dataFim=${dataFim}`;
     if (formaPagamento) {
         url += `&formaPagamento=${formaPagamento}`;
     }
@@ -53,7 +54,7 @@ function carregarRelatorio() {
         })
         .catch(error => {
             console.error('Erro:', error);
-            alert('Erro ao carregar o relatório.');
+            M.toast({ html: `Erro ao carregar o relatório.`, classes: 'red' });
         });
 }
 

@@ -5,6 +5,8 @@ import com.tcc2.ellemVeigaOficial.config.authentication.JwtTokenService;
 import com.tcc2.ellemVeigaOficial.config.security.RecoveryJwtTokenDto;
 import com.tcc2.ellemVeigaOficial.config.userdetails.UserDetailsImpl;
 import com.tcc2.ellemVeigaOficial.models.Login;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,19 +18,22 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Service
 public class UsuarioService {
-
-    private final UsuarioRepository repository;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenService jwtTokenService;
+    @Autowired
+    private UsuarioRepository repository;
+    
+    @Autowired
+    private  AuthenticationManager authenticationManager;
+    
+    @Autowired
+    private  JwtTokenService jwtTokenService;
 
     public RecoveryJwtTokenDto authenticateUser(Login loginUserDto) {
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+       UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(loginUserDto.getUsuario(), loginUserDto.getSenha());
-
+               
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
+        
         return new RecoveryJwtTokenDto(jwtTokenService.gerarToken(userDetails));
     }
 

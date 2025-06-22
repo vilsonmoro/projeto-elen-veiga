@@ -1,67 +1,95 @@
 package com.tcc2.ellemVeigaOficial.config.security;
 
+import java.util.List;
+import com.tcc2.ellemVeigaOficial.config.authentication.PublicEndpoints;
 import com.tcc2.ellemVeigaOficial.config.authentication.UserAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfiguration {
 
-    private final UserAuthenticationFilter userAuthenticationFilter;
-
     @Autowired
-    public SecurityConfiguration(UserAuthenticationFilter userAuthenticationFilter) {
-        this.userAuthenticationFilter = userAuthenticationFilter;
-    }
+	private UserAuthenticationFilter userAuthenticationFilter;
 
-    public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/",
-            "/login",
-            "/css/**",
-            "/js/**",
-            "/images/**",
-            "/favicon.ico",
-            "/paginainicial",
-            "/fluxocaixa",
-            "/relatorio",
-            "/pedido/**",
-            "/venda/**",
-            "/produtovenda/**",
-            "/buscarvenda",
-            "/produto/**"
-        };
+	@Autowired
+	public SecurityConfiguration(UserAuthenticationFilter userAuthenticationFilter) {
+		this.userAuthenticationFilter = userAuthenticationFilter;
+	}
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
-                        .anyRequest().authenticated())
-                .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        return httpSecurity.build();
-    }
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+		httpSecurity
+		.cors(Customizer.withDefaults())
+		.csrf(AbstractHttpConfigurer::disable)
+		.headers(headers -> headers.frameOptions().disable())
+				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(PublicEndpoints.ENDPOINTS.toArray(new String[0]))
+						.permitAll()
+				        .anyRequest().authenticated())
+				.addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+		return httpSecurity.build();
+		/*httpSecurity
+        .cors().and()
+        .csrf().disable()
+        .headers().frameOptions().disable()
+        .and()
+        .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authorizeHttpRequests(auth -> auth
+            // Libera os endpoints públicos definidos
+            .requestMatchers(PublicEndpoints.ENDPOINTS.toArray(new String[0])).permitAll()
+            
+            // Libera o acesso para usuários autenticados com ROLE_USER
+            .requestMatchers("/clientes/**").hasRole("USER")
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+            // Qualquer outra requisição precisa de autenticação
+            .anyRequest().authenticated()
+        )
+        // Adiciona o filtro JWT antes do filtro padrão de login
+        .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    return httpSecurity.build();*/
+		
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+			throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+	
+	 @Bean
+	    public CorsConfigurationSource corsConfigurationSource() {
+	        CorsConfiguration config = new CorsConfiguration();
+	        config.setAllowedOrigins(List.of("*"));  
+	        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	        config.setAllowedHeaders(List.of("*"));
+
+	        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	        source.registerCorsConfiguration("/**", config);  
+	        return source;
+	    }
 
 }

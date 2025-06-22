@@ -1,3 +1,5 @@
+import { BASE_URL } from './url_base'
+
 let pedidosPaginados = [];
 let currentPage = 1;
 const itemsPerPage = 10;
@@ -7,7 +9,7 @@ function confirmLogout(event) {
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }
 
@@ -23,7 +25,7 @@ async function searchPedido() {
     if (dataFim) params.append('dataFim', dataFim);
 
     try {
-        const response = await fetch(`pedido/buscar?${params.toString()}`, {
+        const response = await fetch(`${BASE_URL}/pedido/buscar?${params.toString()}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -36,7 +38,6 @@ async function searchPedido() {
         }
 
         const pedidos = await response.json();
-        
         let filtrados = pedidos;
 		if (codigo) {
 			filtrados = filtrados.filter(c => String(c.id).includes(codigo));
@@ -48,7 +49,6 @@ async function searchPedido() {
         console.error(error);
 		M.toast({ html: `Erro ao buscar pedidos: ${error}`, classes: 'red' });
     }
-
 }
 
 function populateResultsTable(pedidos) {
@@ -59,23 +59,24 @@ function populateResultsTable(pedidos) {
 
 function renderPage() {
     const tbody = document.querySelector('#resultsTable tbody');
-    tbody.innerHTML = ''; 
+    tbody.innerHTML = '';
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const pageItems = pedidosPaginados.slice(startIndex, endIndex);
 
     if (pageItems.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Nenhum pedido encontrado</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Nenhum pedido encontrado</td></tr>';
         return;
     }
 
     pageItems.forEach(pedido => {
+        const dataPedido = new Date(pedido.data).toLocaleDateString('pt-BR');
+
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${pedido.id}</td>
-            <td>${pedido.dataInicio}</td>
-            <td>${pedido.dataFim}</td>
+            <td>${dataPedido}</td>
             <td>
                 <button class="action-button" onclick="editpedido('${pedido.id}')">
                     <span class="material-icons">edit</span>
@@ -92,6 +93,7 @@ function renderPage() {
     document.getElementById('prevButton').disabled = currentPage === 1;
     document.getElementById('nextButton').disabled = endIndex >= pedidosPaginados.length;
 }
+
 
 function changePage(direction) {
     const totalPages = Math.ceil(pedidosPaginados.length / itemsPerPage);
@@ -119,7 +121,7 @@ async function editpedido(codigo) {
 	const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`/pedido/${codigo}`, {
+        const response = await fetch(`${BASE_URL}/pedido/${codigo}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -128,7 +130,7 @@ async function editpedido(codigo) {
         });
 
         if (!response.ok) {
-            alert('Erro ao buscar pedido: ' + response.statusText);
+            M.toast({ html: `Erro ao buscar pedido: ${response.statusText}`, classes: 'red' });
             return;
         }
 
@@ -136,22 +138,22 @@ async function editpedido(codigo) {
 
         localStorage.setItem('pedidoParaEditar', JSON.stringify(pedido));
 
-        window.location.href = '/alterarpedido';
+        window.location.href = './alterarpedido.html';
 
     } catch (error) {
         console.error('Erro ao buscar pedido:', error);
-        alert('Erro inesperado ao buscar os dados do pedido.');
+        M.toast({ html: `Erro inesperado ao buscar os dados do pedido.`, classes: 'red' });
     }
 }
 
 async function confirmDelete(codigo) {
-	const confirmed = confirm("Tem certeza que deseja excluir este pedido?");
+    const confirmed = confirm("Tem certeza que deseja excluir este pedido?");
     if (!confirmed) return;
 
     const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`/pedido/${codigo}`, {
+        const response = await fetch(`${BASE_URL}/pedido/${codigo}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -160,14 +162,14 @@ async function confirmDelete(codigo) {
         });
 
         if (response.ok) {
-            alert("Pedido excluído com sucesso!");
+            M.toast({ html: 'Pedido excluído com sucesso!', classes: 'green' });
             searchPedido();
         } else {
-            const errorData = await response.json();
-            alert("Erro ao excluir o pedido: " + (errorData.message || response.statusText));
+            const errorText = await response.text(); // Captura mensagem simples retornada
+            M.toast({ html: `Erro ao excluir o pedido: ${errorText}`, classes: 'red' });
         }
     } catch (error) {
         console.error("Erro ao excluir o pedido:", error);
-        alert("Erro inesperado ao tentar excluir o pedido.");
+        M.toast({ html: `Erro inesperado ao tentar excluir o pedido.`, classes: 'red' });
     }
 }

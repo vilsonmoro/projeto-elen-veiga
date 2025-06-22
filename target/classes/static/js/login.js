@@ -1,3 +1,4 @@
+import { BASE_URL } from './url_base'
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('.formLogin');
     form.addEventListener('submit', function (event) {
@@ -7,12 +8,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const password = document.getElementById('password').value;
     
         if (!login || login.trim().length < 3) {
-            alert('Por favor, insira um email válido ou um nome de usuário (mínimo 3 caracteres).');
+            M.toast({ html: 'Por favor, insira um email válido ou um nome de usuário (mínimo 3 caracteres).', classes: 'yellow' });
             return;
         }
     
         if (!password) {
-            alert('Por favor, insira sua senha.');
+            M.toast({ html: 'Por favor, insira sua senha.', classes: 'yellow' });
             return;
         }
     
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     
         // Chamada à API para autenticação
-        fetch('/login', {
+        fetch('${BASE_URL}/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -50,14 +51,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 localStorage.setItem('userId', userId);
 
                 // Redirecionar para a página inicial
-                window.location.href = "../paginainicial"; // ou qualquer página desejada
+                window.location.href = "./paginainicial.html"; // ou qualquer página desejada
             } else {
-                alert('Erro: Token não recebido.');
+                M.toast({ html: `Erro: Token não recebido.`, classes: 'red' });
             }
         })
         .catch(error => {
             console.error('Erro ao se conectar ao servidor:', error);
-            alert('Erro ao se conectar ao servidor: ' + error.message);
+            M.toast({ html: `Erro ao se conectar ao servidor: ${error}`, classes: 'red' });
         });
     });
 });

@@ -1,9 +1,11 @@
+import { BASE_URL } from './url_base'
+
 function confirmLogout(event) {
     event.preventDefault();
     const confirmed = confirm("Você deseja realmente sair da aplicação?");
     if (confirmed) {
         localStorage.clear(); 
-        window.location.href = "/login";
+        window.location.href = "./login.html";
     }
 }
 
@@ -11,8 +13,8 @@ window.onload = function() {
     const usuarioData = localStorage.getItem('usuarioParaEditar');
 
     if (!usuarioData) {
-        alert('Nenhum usuário selecionado para edição.');
-        window.location.href = '/buscarusuario';
+        M.toast({ html: 'Nenhum usuário selecionado para edição.', classes: 'yellow' });
+        window.location.href = './buscarusuario.html';
         return;
     }
 
@@ -47,41 +49,41 @@ document.querySelector('.btn').addEventListener('click', async function(e) {
     if (!confirmarSenha) camposFaltando.push('Confirmar Senha');
 
     if (camposFaltando.length > 0) {
-        alert(`Os seguintes campos são obrigatórios: ${camposFaltando.join(', ')}`);
+        M.toast({ html: `Os seguintes campos são obrigatórios: ${camposFaltando.join(', ')}`, classes: 'red' });
         return;
     }
 
     // Validações adicionais
     if (usuario.length < 3 || usuario.length > 25) {
-        alert('O usuário deve ter entre 3 e 25 caracteres.');
+        M.toast({ html: 'O usuário deve ter entre 3 e 25 caracteres.', classes: 'yellow' });
         return;
     }
 
     if (usuario.includes(' ')) {
-        alert('O usuário não pode conter espaços.');
+        M.toast({ html: 'O usuário não pode conter espaços.', classes: 'yellow' });
         return;
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
-        alert('Por favor, insira um e-mail válido.');
+        M.toast({ html: 'Por favor, insira um e-mail válido.', classes: 'yellow' });
         return;
     }
 
     const senhaPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
     if (senha && !senhaPattern.test(senha)) {
-        alert('A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um caractere especial e ter no mínimo 8 caracteres.');
+        M.toast({ html: 'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um caractere especial e ter no mínimo 8 caracteres.', classes: 'yellow' });
         return;
     }
 
     if (senha !== confirmarSenha) {
-        alert('As senhas não coincidem.');
+        M.toast({ html: 'As senhas não coincidem.', classes: 'yellow' });
         return;
     }
 
     const usuarioData = localStorage.getItem('usuarioParaEditar');
     if (!usuarioData) {
-        alert('Usuário não encontrado.');
+        M.toast({ html: 'Usuário não encontrado.', classes: 'red' });
         return;
     }
 
@@ -90,7 +92,7 @@ document.querySelector('.btn').addEventListener('click', async function(e) {
 
     const usuarioId = localStorage.getItem('userId');
     if (!usuarioId) {
-        alert('ID do usuário não encontrado. Faça login novamente.');
+        M.toast({ html: 'ID do usuário não encontrado. Faça login novamente.', classes: 'yellow' });
         return;
     }
 
@@ -106,7 +108,7 @@ document.querySelector('.btn').addEventListener('click', async function(e) {
     try {
         const token = localStorage.getItem('token');
 
-        const response = await fetch(`/usuario/${id}`, {
+        const response = await fetch(`${BASE_URL}/usuario/${id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -117,7 +119,7 @@ document.querySelector('.btn').addEventListener('click', async function(e) {
 
         if (response.ok) {
             M.toast({ html: 'Usuário atualizado com sucesso!', classes: 'green' });
-            window.location.href = '/buscarusuario';
+            window.location.href = './buscarusuario.html';
         } else {
             const errorData = await response.json();
             const errorMsg = errorData.message || errorData.error || 'Erro desconhecido.';

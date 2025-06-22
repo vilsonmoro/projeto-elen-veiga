@@ -1,11 +1,20 @@
 package com.tcc2.ellemVeigaOficial.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public class FormaPagamentoDTO {
-    private final String nome;
-    private final String descricao;
+	private  String nome;
+	private  String descricao;
+
+	public String getNome() {
+		return nome;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public FormaPagamentoDTO(String nome, String descricao) {
+		this.nome = nome;
+		this.descricao = descricao;
+	}
+
 }
