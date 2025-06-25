@@ -78,10 +78,10 @@ public class GlobalExceptionHandler {
 
 
 
-    @ExceptionHandler(Exception.class)
+  /*  @ExceptionHandler(Exception.class)
     public ResponseEntity<ErroResponse> handleOutrasExceptions(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErroResponse("Erro inesperado", ex.getMessage()));
-    }
+    }*/
 
     public record ErroResponse(String erro, String detalhe) {}
 
