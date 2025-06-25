@@ -2,19 +2,16 @@ package com.tcc2.ellemVeigaOficial.config.authentication;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tcc2.ellemVeigaOficial.config.userdetails.UserDetailsImpl;
 import com.tcc2.ellemVeigaOficial.models.Usuario;
 import com.tcc2.ellemVeigaOficial.repositories.UsuarioRepository;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,9 +55,10 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        
         }
         filterChain.doFilter(request, response);
-    }
+}
 
     private boolean isPublicPath(HttpServletRequest request) {
     	return publicMatchers.stream().anyMatch(matcher -> matcher.matches(request));

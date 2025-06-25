@@ -8,9 +8,7 @@ import com.tcc2.ellemVeigaOficial.models.Usuario;
 import com.tcc2.ellemVeigaOficial.models.Vendedor;
 import com.tcc2.ellemVeigaOficial.repositories.UsuarioRepository;
 import com.tcc2.ellemVeigaOficial.repositories.VendedorRepository;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 @Service
 public class VendedorService {
     @Autowired

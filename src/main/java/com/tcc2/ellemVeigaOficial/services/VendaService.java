@@ -3,9 +3,7 @@ package com.tcc2.ellemVeigaOficial.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
-
 import com.tcc2.ellemVeigaOficial.models.Cliente;
 import com.tcc2.ellemVeigaOficial.models.Pedido;
 import com.tcc2.ellemVeigaOficial.models.Usuario;
@@ -16,15 +14,9 @@ import com.tcc2.ellemVeigaOficial.repositories.PedidoRepository;
 import com.tcc2.ellemVeigaOficial.repositories.UsuarioRepository;
 import com.tcc2.ellemVeigaOficial.repositories.VendaRepository;
 import com.tcc2.ellemVeigaOficial.repositories.VendedorRepository;
-
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import java.util.Date;
 
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
 public class VendaService {
     @Autowired
     private VendaRepository repository;

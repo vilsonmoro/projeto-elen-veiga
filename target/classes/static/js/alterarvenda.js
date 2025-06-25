@@ -55,6 +55,7 @@ function registrarEventos() {
 
   document.getElementById('frete').addEventListener('input', atualizarValorTotalPagamento);
   document.getElementById('valortotal').addEventListener('input', atualizarValorTotalPagamento);
+   document.getElementById('valorentrada').addEventListener('input', atualizarValorTotalPagamento);
   produtoForm.addEventListener('submit', e => {
     e.preventDefault();
     salvarProduto();
@@ -65,10 +66,10 @@ function registrarEventos() {
 }
 
 function configurarAutocompletes() {
-  setupClienteAutocomplete('cliente', '${BASE_URL}/cliente/buscar', 'cliente-suggestions', 'nome');
-  setupProdutoAutocomplete('nome', '${BASE_URL}/produto/buscar', 'nome-suggestions', 'nome');
-  setupVendedorAutocomplete('vendedor', '${BASE_URL}/vendedor/buscar', 'vendedor-suggestions', 'nome');
-  setupPedidoAutocomplete('pedido', '${BASE_URL}/pedido/buscar', 'pedido-suggestions', 'id');
+  setupClienteAutocomplete('cliente', `${BASE_URL}/cliente/buscar`, 'cliente-suggestions', 'nome');
+  setupProdutoAutocomplete('nome', `${BASE_URL}/produto/buscar`, 'nome-suggestions', 'nome');
+  setupVendedorAutocomplete('vendedor', `${BASE_URL}/vendedor/buscar`, 'vendedor-suggestions', 'nome');
+  setupPedidoAutocomplete('pedido', `${BASE_URL}/pedido/buscar`, 'pedido-suggestions', 'id');
 }
 
 function mostrarPopup(ativo) {
@@ -689,7 +690,7 @@ async function enviarProdutosDaVenda() {
     });
 
     if (produtosParaCriar.length > 0) {
-      const postResponse = await fetch('${BASE_URL}/produtovenda', {
+      const postResponse = await fetch(`${BASE_URL}/produtovenda`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -806,6 +807,11 @@ function preencherFormularioComVendaParaEditar() {
       console.error('Erro ao carregar produtos da venda:', error);
     });
   }
+
+  if (vendaParaEditar.vendedor && vendaParaEditar.vendedor.desconto != null) {
+    localStorage.setItem('venda_vendedor_desconto', vendaParaEditar.vendedor.desconto);
+  }
+
   M.FormSelect.init(document.querySelectorAll('select'));
 }
 

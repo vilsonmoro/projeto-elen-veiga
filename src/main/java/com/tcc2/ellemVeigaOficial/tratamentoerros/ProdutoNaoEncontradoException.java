@@ -1,0 +1,8 @@
+package com.tcc2.ellemVeigaOficial.tratamentoerros;
+
+public class ProdutoNaoEncontradoException extends RuntimeException {
+    public ProdutoNaoEncontradoException(String message) {
+        super(message);
+    }
+}
+

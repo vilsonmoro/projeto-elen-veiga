@@ -56,8 +56,8 @@ function registrarEventos() {
 }
 
 function configurarAutocompletes() {
-  setupClienteAutocomplete('cliente', '${BASE_URL}/cliente/buscar', 'cliente-suggestions', 'nome');
-  setupProdutoAutocomplete('nome', '${BASE_URL}/produto/buscar', 'nome-suggestions', 'nome');
+  setupClienteAutocomplete('cliente', `${BASE_URL}/cliente/buscar`, 'cliente-suggestions', 'nome');
+  setupProdutoAutocomplete('nome', `${BASE_URL}/produto/buscar`, 'nome-suggestions', 'nome');
 }
 
 function mostrarPopup(ativo) {
@@ -76,7 +76,7 @@ async function cadastrarPedido() {
 
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch('${BASE_URL}/pedido', {
+    const response = await fetch(`${BASE_URL}/pedido`, {
       method: 'POST',
       headers: { 
         'Authorization': `Bearer ${token}`,
@@ -456,7 +456,7 @@ async function enviarProdutosDoPedido() {
 
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch('${BASE_URL}/pedidoproduto', {
+    const response = await fetch(`${BASE_URL}/pedidoproduto`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

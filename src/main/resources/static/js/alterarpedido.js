@@ -153,8 +153,8 @@ function registrarEventos() {
 
 /* Configura autocompletes de cliente e produto */
 function configurarAutocompletes() {
-  setupClienteAutocomplete('cliente', '${BASE_URL}/cliente/buscar', 'cliente-suggestions', 'nome');
-  setupProdutoAutocomplete('nome', '${BASE_URL}/produto/buscar', 'nome-suggestions', 'nome');
+  setupClienteAutocomplete('cliente', `${BASE_URL}/cliente/buscar`, 'cliente-suggestions', 'nome');
+  setupProdutoAutocomplete('nome', `${BASE_URL}/produto/buscar`, 'nome-suggestions', 'nome');
 }
 
 /* Exibe ou oculta o popup */
@@ -615,7 +615,7 @@ async function enviarProdutosDoPedido() {
 
     // Criar apenas os produtos novos
     if (produtosParaCriar.length > 0) {
-      const postResponse = await fetch('${BASE_URL}/pedidoproduto', {
+      const postResponse = await fetch(`${BASE_URL}/pedidoproduto`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

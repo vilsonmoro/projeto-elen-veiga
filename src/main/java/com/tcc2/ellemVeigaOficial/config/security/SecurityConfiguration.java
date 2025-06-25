@@ -37,35 +37,13 @@ public class SecurityConfiguration {
 		.cors(Customizer.withDefaults())
 		.csrf(AbstractHttpConfigurer::disable)
 		.headers(headers -> headers.frameOptions().disable())
-				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers(PublicEndpoints.ENDPOINTS.toArray(new String[0]))
-						.permitAll()
-				        .anyRequest().authenticated())
-				.addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+			.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+		.authorizeHttpRequests(auth -> auth
+			.requestMatchers(PublicEndpoints.ENDPOINTS.toArray(new String[0]))
+			.permitAll()
+			.anyRequest().authenticated())
+			.addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return httpSecurity.build();
-		/*httpSecurity
-        .cors().and()
-        .csrf().disable()
-        .headers().frameOptions().disable()
-        .and()
-        .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .authorizeHttpRequests(auth -> auth
-            // Libera os endpoints públicos definidos
-            .requestMatchers(PublicEndpoints.ENDPOINTS.toArray(new String[0])).permitAll()
-            
-            // Libera o acesso para usuários autenticados com ROLE_USER
-            .requestMatchers("/clientes/**").hasRole("USER")
-
-            // Qualquer outra requisição precisa de autenticação
-            .anyRequest().authenticated()
-        )
-        // Adiciona o filtro JWT antes do filtro padrão de login
-        .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-    return httpSecurity.build();*/
 		
 	}
 

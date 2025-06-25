@@ -66,7 +66,7 @@ document.querySelector('.btn').addEventListener('click', async function(e) {
     try {
         const token = localStorage.getItem('token');
 
-        const response = await fetch('${BASE_URL}/usuario/cadastro', {
+        const response = await fetch(`${BASE_URL}/usuario/cadastro`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

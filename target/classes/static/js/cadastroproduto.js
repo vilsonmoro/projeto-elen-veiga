@@ -145,7 +145,7 @@ async function enviarProduto() {
     try {
         const token = localStorage.getItem('token');
 
-        const response = await fetch('${BASE_URL}/produto', {
+        const response = await fetch(`${BASE_URL}/produto`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

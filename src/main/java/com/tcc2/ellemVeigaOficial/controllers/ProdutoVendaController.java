@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.Calendar;
 import java.util.List;
 import java.util.Date;
@@ -28,7 +26,7 @@ public class ProdutoVendaController {
     private ProdutoVendaService service;
 
     @PostMapping("/produtovenda")
-    public ResponseEntity<?> criarProdutosVenda(@RequestBody List<ProdutoVenda> produtosVenda) {
+    public ResponseEntity<?> addProdutoVendas(@RequestBody List<ProdutoVenda> produtosVenda) {
         List<ProdutoVenda> salvos = service.addProdutoVendas(produtosVenda);
         return ResponseEntity.ok(salvos); // ou uma mensagem se preferir
     }

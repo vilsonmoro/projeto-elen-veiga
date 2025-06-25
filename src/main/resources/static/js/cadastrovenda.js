@@ -56,10 +56,10 @@ function registrarEventos() {
 }
 
 function configurarAutocompletes() {
-  setupClienteAutocomplete('cliente', '${BASE_URL}/cliente/buscar', 'cliente-suggestions', 'nome');
-  setupProdutoAutocomplete('nome', '${BASE_URL}/produto/buscar', 'nome-suggestions', 'nome');
-  setupVendedorAutocomplete('vendedor', '${BASE_URL}/vendedor/buscar', 'vendedor-suggestions', 'nome');
-  setupPedidoAutocomplete('pedido', '${BASE_URL}/pedido/buscar', 'pedido-suggestions', 'id');
+  setupClienteAutocomplete('cliente', `${BASE_URL}/cliente/buscar`, 'cliente-suggestions', 'nome');
+  setupProdutoAutocomplete('nome', `${BASE_URL}/produto/buscar`, 'nome-suggestions', 'nome');
+  setupVendedorAutocomplete('vendedor', `${BASE_URL}/vendedor/buscar`, 'vendedor-suggestions', 'nome');
+  setupPedidoAutocomplete('pedido', `${BASE_URL}/pedido/buscar`, 'pedido-suggestions', 'id');
 }
 
 function mostrarPopup(ativo) {
@@ -107,7 +107,7 @@ async function cadastrarVenda() {
 
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch('${BASE_URL}/venda', {
+    const response = await fetch(`${BASE_URL}/venda`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

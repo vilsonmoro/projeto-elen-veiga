@@ -74,7 +74,7 @@ document.querySelector('.btn').addEventListener('click', async function (e) {
 
     // Envio para o backend
     try {
-        const response = await fetch('${BASE_URL}/vendedor', {
+        const response = await fetch(`${BASE_URL}/vendedor`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

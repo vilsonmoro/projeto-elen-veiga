@@ -13,9 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import com.tcc2.ellemVeigaOficial.models.Usuario;
 import com.tcc2.ellemVeigaOficial.repositories.UsuarioRepository;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 @Service
 public class UsuarioService {
     @Autowired

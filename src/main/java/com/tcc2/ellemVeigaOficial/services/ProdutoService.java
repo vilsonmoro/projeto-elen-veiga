@@ -10,12 +10,7 @@ import com.tcc2.ellemVeigaOficial.repositories.ProdutoRepository;
 import com.tcc2.ellemVeigaOficial.repositories.ProdutoVendaRepository;
 import com.tcc2.ellemVeigaOficial.repositories.UsuarioRepository;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
 public class ProdutoService {
     @Autowired
     private ProdutoRepository repository;

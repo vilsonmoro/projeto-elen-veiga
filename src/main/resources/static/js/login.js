@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     
         // Chamada à API para autenticação
-        fetch('${BASE_URL}/login', {
+        fetch(`${BASE_URL}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

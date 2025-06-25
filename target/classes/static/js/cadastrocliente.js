@@ -85,7 +85,7 @@ document.getElementById('cadastrarBtn').addEventListener('click', async function
     };
 
     try {
-        const response = await fetch('${BASE_URL}/cliente', {
+        const response = await fetch(`${BASE_URL}/cliente`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -1,8 +1,5 @@
 package com.tcc2.ellemVeigaOficial.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 public class TipoEntregaDTO {
     private final String nome;
     private final String descricao;
@@ -17,6 +14,4 @@ public class TipoEntregaDTO {
 		this.nome = nome;
 		this.descricao = descricao;
 	}
-    
-    
 }

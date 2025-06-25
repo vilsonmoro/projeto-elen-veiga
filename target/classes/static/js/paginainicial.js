@@ -70,7 +70,7 @@ async function exibirPedidos() {
 
 // Função para buscar os dados da API e criar o gráfico
 function carregarDadosVendas() {
-    fetch('${BASE_URL}/produtovenda/vendasmes')
+    fetch(`${BASE_URL}/produtovenda/vendasmes`)
         .then(response => {
             if (!response.ok) throw new Error('Erro ao carregar dados da API');
             return response.json();

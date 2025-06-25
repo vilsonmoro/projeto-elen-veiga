@@ -1,9 +1,7 @@
 package com.tcc2.ellemVeigaOficial.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
 public enum TipoEntrega {
     CARRO("Carro"),
@@ -12,4 +10,17 @@ public enum TipoEntrega {
     TRANSPORTADORA("Transportadora");
 
     private final String descricao;
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    @Override
+    public String toString() {
+        return descricao;
+    }
+
+     private TipoEntrega(String descricao) {
+        this.descricao = descricao;
+    }
 }

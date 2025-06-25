@@ -1,8 +1,5 @@
 package com.tcc2.ellemVeigaOficial.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 public class TipoStatusDTO {
 	private String nome;
 	private String descricao;

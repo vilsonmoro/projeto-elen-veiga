@@ -2,7 +2,6 @@ package com.tcc2.ellemVeigaOficial.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,10 +16,7 @@ import java.util.List;
 import java.util.Date;
 import com.tcc2.ellemVeigaOficial.models.Pedido;
 import com.tcc2.ellemVeigaOficial.services.PedidoService;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-
 
 @RestController
 @CrossOrigin
@@ -30,8 +26,8 @@ public class PedidoController {
     private PedidoService service;
 
     @PostMapping("/pedido")
-    public ResponseEntity<Pedido> criarPedido(@RequestBody Pedido pedido) {
-        Pedido salvo = service.salvar(pedido);
+    public ResponseEntity<Pedido> addPedido(@RequestBody Pedido pedido) {
+        Pedido salvo = service.addPedido(pedido);
         return ResponseEntity.ok(salvo);
     }
 
@@ -47,24 +43,13 @@ public class PedidoController {
 
     @PutMapping("/pedido/{id}")
     public ResponseEntity<Pedido> updatePedido(@PathVariable Long id, @RequestBody Pedido pedido) {
-        try {
-            Pedido updatePedido = service.update(id, pedido);
-            return ResponseEntity.ok(updatePedido);
-        } catch (RuntimeException e){
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(service.update(id, pedido));
     }
     
     @DeleteMapping("/pedido/{id}")
     public ResponseEntity<?> deletePedido(@PathVariable Long id) {
-        try {
-            service.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pedido não encontrado.");
-        }
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/pedido/buscar")

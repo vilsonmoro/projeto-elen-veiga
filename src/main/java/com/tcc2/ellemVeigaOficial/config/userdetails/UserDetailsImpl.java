@@ -2,7 +2,6 @@ package com.tcc2.ellemVeigaOficial.config.userdetails;
 
 
 import com.tcc2.ellemVeigaOficial.models.Usuario;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

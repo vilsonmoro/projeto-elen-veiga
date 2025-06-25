@@ -41,22 +41,14 @@ public class PedidoProdutoController {
 
     @PutMapping("/pedidoproduto/{id}")
     public ResponseEntity<PedidoProduto> updatePedidoProduto(@PathVariable Long id, @RequestBody PedidoProduto pedidoProduto) {
-        try {
             PedidoProduto updatePedidoProduto = service.update(id, pedidoProduto);
             return ResponseEntity.ok(updatePedidoProduto);
-        } catch (RuntimeException e){
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @PutMapping("/pedidoproduto")
     public ResponseEntity<List<PedidoProduto>> updatePedidoProdutos(@RequestBody List<PedidoProduto> pedidoProdutos) {
-        try {
             List<PedidoProduto> updatedList = service.updatePedidoProdutos(pedidoProdutos);
             return ResponseEntity.ok(updatedList);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @DeleteMapping("/pedidoproduto/{id}")

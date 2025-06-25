@@ -6,8 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tcc2.ellemVeigaOficial.repositories.UsuarioRepository;
 import com.tcc2.ellemVeigaOficial.tratamentoerros.ClienteNaoEncontradoException;
 import com.tcc2.ellemVeigaOficial.tratamentoerros.UsuarioNaoEncontradoException;
-
-import lombok.AllArgsConstructor;
 import java.util.List;
 import com.tcc2.ellemVeigaOficial.models.Cliente;
 import com.tcc2.ellemVeigaOficial.models.Usuario;
@@ -15,7 +13,6 @@ import com.tcc2.ellemVeigaOficial.repositories.ClienteRepository;
 
 
 @Service
-@AllArgsConstructor
 public class ClienteService {
     @Autowired
     private ClienteRepository repository;

@@ -2,11 +2,6 @@ package com.tcc2.ellemVeigaOficial.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public enum TipoStatus {
     ATIVO("Ativo"),
     DESATIVADO("Desativado"),
@@ -34,4 +29,18 @@ public enum TipoStatus {
                 throw new IllegalArgumentException("Valor inválido para o Enum TipoStatus: " + value);
         }
     }
+
+    private TipoStatus(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    @Override
+    public String toString() {
+        return descricao;
+    }
+
 }
