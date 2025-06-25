@@ -49,7 +49,7 @@ public class FluxoCaixaService {
                         .collect(Collectors.joining(", "));
             }
 
-            relatorio.add(FluxoCaixa.builder()
+            relatorio.add(new FluxoCaixa.Builder()
                     .data(venda.getData().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
                     .idVenda(venda.getId())
                     .valor(valorVenda)
@@ -70,7 +70,7 @@ public class FluxoCaixaService {
                 }
             }
 
-            relatorio.add(FluxoCaixa.builder()
+            relatorio.add(new FluxoCaixa.Builder()
                     .data(venda.getData().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
                     .idVenda(venda.getId())
                     .nomeProduto(nomeProdutoEntrada)
@@ -83,8 +83,8 @@ public class FluxoCaixaService {
             totalSaidas += custoTotalVenda;
         }
 
-        relatorio.add(FluxoCaixa.builder().valor(totalEntradas).tipo("totalEntrada").build());
-        relatorio.add(FluxoCaixa.builder().valor(totalSaidas).tipo("totalSaida").build());
+        relatorio.add(new FluxoCaixa.Builder().valor(totalEntradas).tipo("totalEntrada").build());
+        relatorio.add(new FluxoCaixa.Builder().valor(totalSaidas).tipo("totalSaida").build());
         return relatorio;
     }
 }

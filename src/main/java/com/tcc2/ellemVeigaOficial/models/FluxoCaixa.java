@@ -3,9 +3,6 @@ package com.tcc2.ellemVeigaOficial.models;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import lombok.Builder;
-
-@Builder
 public class FluxoCaixa {
     private LocalDate data;
     private String nomeProduto;
@@ -143,5 +140,78 @@ public class FluxoCaixa {
                 ", formaPagamento=" + formaPagamento +
                 ", tipo='" + tipo + '\'' +
                 '}';
+    }
+
+    private FluxoCaixa(Builder builder) {
+        this.data = builder.data;
+        this.nomeProduto = builder.nomeProduto;
+        this.nomeCliente = builder.nomeCliente;
+        this.idVenda = builder.idVenda;
+        this.desconto = builder.desconto;
+        this.valor = builder.valor;
+        this.valorSemComissao = builder.valorSemComissao;
+        this.formaPagamento = builder.formaPagamento;
+        this.tipo = builder.tipo;
+    }
+
+    public static class Builder {
+        private LocalDate data;
+        private String nomeProduto;
+        private String nomeCliente;
+        private Long idVenda;
+        private Float desconto;
+        private Float valor;
+        private Float valorSemComissao;
+        private FormaPagamento formaPagamento;
+        private String tipo;
+
+        public Builder data(LocalDate data) {
+            this.data = data;
+            return this;
+        }
+
+        public Builder nomeProduto(String nomeProduto) {
+            this.nomeProduto = nomeProduto;
+            return this;
+        }
+
+        public Builder nomeCliente(String nomeCliente) {
+            this.nomeCliente = nomeCliente;
+            return this;
+        }
+
+        public Builder idVenda(Long idVenda) {
+            this.idVenda = idVenda;
+            return this;
+        }
+
+        public Builder desconto(Float desconto) {
+            this.desconto = desconto;
+            return this;
+        }
+
+        public Builder valor(Float valor) {
+            this.valor = valor;
+            return this;
+        }
+
+        public Builder valorSemComissao(Float valorSemComissao) {
+            this.valorSemComissao = valorSemComissao;
+            return this;
+        }
+
+        public Builder formaPagamento(FormaPagamento formaPagamento) {
+            this.formaPagamento = formaPagamento;
+            return this;
+        }
+
+        public Builder tipo(String tipo) {
+            this.tipo = tipo;
+            return this;
+        }
+
+        public FluxoCaixa build() {
+            return new FluxoCaixa(this);
+        }
     }
 }
