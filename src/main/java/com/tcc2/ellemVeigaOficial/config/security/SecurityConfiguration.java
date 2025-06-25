@@ -31,7 +31,7 @@ public class SecurityConfiguration {
 		this.userAuthenticationFilter = userAuthenticationFilter;
 	}
 
-	@Bean
+	/*@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
 		.cors(Customizer.withDefaults())
@@ -45,7 +45,13 @@ public class SecurityConfiguration {
 			.addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return httpSecurity.build();
 		
-	}
+	}*/
+	@Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        return http.build();
+    }
 
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
