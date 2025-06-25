@@ -36,6 +36,7 @@ public class ClienteController {
     
     @PostMapping("/cliente")
     public ResponseEntity<Cliente> addCliente(@RequestBody Cliente cliente){
+    	System.out.println("cheguei aqui cont");
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addCliente(cliente));
     }
 

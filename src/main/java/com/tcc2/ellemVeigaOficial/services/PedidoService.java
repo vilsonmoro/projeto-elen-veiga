@@ -91,6 +91,6 @@ public class PedidoService {
     }
 
     public List<Pedido> buscarPedidos(Long id, Date dataInicio, Date dataFim) {
-        return pedidoRepository.buscarPedidos(id, dataInicio, dataFim);
+    	return pedidoRepository.buscarPedidos(id, dataInicio, dataFim);
     }
 }

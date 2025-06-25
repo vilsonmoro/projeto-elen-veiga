@@ -1,5 +1,6 @@
 package com.tcc2.ellemVeigaOficial.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +24,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @CrossOrigin
 @Tag(name = "Relacionamento Venda X Produto", description = "Operações relacionadas aos produtos de uma venda")
 public class ProdutoVendaController {
-    private ProdutoVendaService service;
+    @Autowired
+	private ProdutoVendaService service;
 
     @PostMapping("/produtovenda")
     public ResponseEntity<?> addProdutoVendas(@RequestBody List<ProdutoVenda> produtosVenda) {
@@ -77,9 +79,12 @@ public class ProdutoVendaController {
 
     @GetMapping("/produtovenda/vendasmes")
     public ResponseEntity<List<VendasPorProdutoDTO>> vendasDoMes() {
+    	
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_MONTH, 1);
         Date primeiroDia = cal.getTime();
+        
+        System.out.println(primeiroDia);
 
         cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
         Date ultimoDia = cal.getTime();

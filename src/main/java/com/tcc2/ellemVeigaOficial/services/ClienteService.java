@@ -56,6 +56,7 @@ public class ClienteService {
     }
 
     private void validarUsuario(Cliente cliente) {
+    	System.out.println("cheguei aqui");
         if (cliente.getUsuario() != null && cliente.getUsuario().getId() != null) {
             Usuario usuario = usuarioRepository.findById(cliente.getUsuario().getId())
                     .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário com ID " + cliente.getUsuario().getId() + " não encontrado."));
