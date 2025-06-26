@@ -3,8 +3,7 @@ package com.tcc2.ellemVeigaOficial.config.authentication;
 import java.util.List;
 
 public class PublicEndpoints {
-    public static final List<String> ENDPOINTS = List.of(
-	    
+    public static final List<String> ENDPOINTS = List.of(	    
 	        "/css/**",
 	        "/js/**",
 	        "/images/**",

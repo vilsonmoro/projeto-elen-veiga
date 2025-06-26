@@ -19,10 +19,11 @@ public class LoginController {
     @Autowired
     private UsuarioService service;
 
-    @CrossOrigin(origins = "*")
     @PostMapping("/login")
     public ResponseEntity<Object> authenticateUser(@RequestBody Login loginUserDto) {
         try {
+        	System.out.println("Método authenticateUser chamado com: " + loginUserDto.toString());
+        	System.out.println("Método authenticateUser chamado com: " + loginUserDto.getUsuario());
         	RecoveryJwtTokenDto token = service.authenticateUser(loginUserDto);
             return new ResponseEntity<>(token, HttpStatus.OK);
         } catch(Exception e) {
